@@ -97,10 +97,31 @@ var SF_DATES  = ['2026-07-18','2026-07-19'];
 var F_DATES   = ['2026-07-26'];
 var DIV_LABELS = {JHS:'Junior High',Girls:'Girls',"HS-NY":"High School NY","HS-NJ":"High School NJ",College:'College',Mens:'Mens'};
 
+function normDate(d){
+  if(!d) return '';
+  d = String(d).trim();
+  // Already YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+  // MM-DD-YYYY or MM/DD/YYYY
+  var m = d.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+  if(m){
+    var mo=m[1].padStart(2,'0'), day=m[2].padStart(2,'0');
+    return m[3]+'-'+mo+'-'+day;
+  }
+  return d;
+}
+
 function loadGames(){
-  fetch('https://nacopticleague.github.io/coybl/data/games.json?_='+Date.now())
+  fetch('https://nacopticleague.github.io/full-schedule-homepage/data/games.json?_='+Date.now())
     .then(function(r){return r.json();})
-    .then(function(d){GAMES=Array.isArray(d)?d:[];var dv=document.getElementById('fdiv').value;if(dv)renderBracket();})
+    .then(function(d){
+      GAMES=(Array.isArray(d)?d:[]).map(function(g){
+        g.date = normDate(g.date);
+        return g;
+      });
+      var dv=document.getElementById('fdiv').value;
+      if(dv)renderBracket();
+    })
     .catch(function(){});
 }
 
