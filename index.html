@@ -9,18 +9,10 @@
 html{overflow-x:hidden;}
 body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
 
-/* ============ HEADER ============ */
-.header{background:linear-gradient(160deg,#4a0d0d 0%,#5c1010 35%,#7d1a1a 70%,#8f2222 100%);padding:28px 20px 24px;text-align:center;position:relative;overflow:hidden;}
-.header::before{content:'';position:absolute;inset:0;background:
-  radial-gradient(circle at 85% -20%,rgba(212,160,23,.22),transparent 55%),
-  radial-gradient(circle at 10% 120%,rgba(212,160,23,.12),transparent 50%),
-  repeating-linear-gradient(115deg,transparent 0 22px,rgba(255,255,255,.025) 22px 24px);}
-.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#d4a017 25%,#f5d78e 50%,#d4a017 75%,transparent);background-size:200% 100%;animation:shine 5s linear infinite;}
-@keyframes shine{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
-.header .trophy{font-size:1.9rem;margin-bottom:6px;position:relative;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4));animation:bob 3.5s ease-in-out infinite;}
-@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
-.header h1{font-size:1.5rem;color:#f5d78e;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 2px 10px rgba(0,0,0,.35);position:relative;}
-.header .sub{font-size:.64rem;color:#dcaaaa;margin-top:6px;letter-spacing:.2em;font-weight:700;text-transform:uppercase;position:relative;}
+/* ============ HEADER (minimal) ============ */
+.header{background:linear-gradient(160deg,#4a0d0d 0%,#5c1010 35%,#7d1a1a 70%,#8f2222 100%);padding:14px 16px 12px;text-align:center;position:relative;overflow:hidden;}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017 25%,#f5d78e 50%,#d4a017 75%,transparent);}
+.header h1{font-size:1.15rem;color:#f5d78e;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.35);position:relative;}
 
 /* ============ FILTERS ============ */
 .filters{background:#d8c8ba;border-bottom:2px solid #b8a492;padding:14px 16px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(92,16,16,.08);}
@@ -31,16 +23,8 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
 .fg select:focus{outline:none;border-color:#d4a017;box-shadow:0 0 0 3px rgba(212,160,23,.25);}
 
 /* ============ MAIN ============ */
-.main{max-width:1000px;margin:0 auto;padding:20px 8px 46px;}
-.div-title{text-align:center;margin-bottom:6px;}
-.div-title h2{display:inline-flex;align-items:center;gap:8px;font-size:1rem;font-weight:800;color:#5c1010;text-transform:uppercase;letter-spacing:.08em;padding:8px 22px;border:1.5px solid #e8d9a0;border-radius:26px;background:linear-gradient(135deg,#fdf8e4,#fffdf5);box-shadow:0 3px 12px rgba(180,130,0,.14);}
-.hs-note{max-width:420px;margin:10px auto 0;text-align:center;font-size:.68rem;font-weight:700;color:#96700a;background:linear-gradient(135deg,#fdf6dd,#fffdf4);border:1px dashed #e5c766;border-radius:10px;padding:8px 14px;line-height:1.5;}
-.legend{display:flex;gap:14px;justify-content:center;margin:12px 0 18px;flex-wrap:wrap;}
-.legend span{display:inline-flex;align-items:center;gap:5px;font-size:.62rem;font-weight:700;color:#8a7a6a;text-transform:uppercase;letter-spacing:.05em;}
-.dot{width:9px;height:9px;border-radius:50%;}
-.dot.g{background:#1a7d1a;}
-.dot.gold{background:#d4a017;}
-.dot.t{background:#cbbba8;}
+.main{max-width:1000px;margin:0 auto;padding:12px 6px 40px;}
+.hs-note{max-width:420px;margin:0 auto 12px;text-align:center;font-size:.7rem;font-weight:700;color:#96700a;background:linear-gradient(135deg,#fdf6dd,#fffdf4);border:1px dashed #e5c766;border-radius:10px;padding:7px 12px;line-height:1.45;}
 
 .empty{text-align:center;padding:52px 20px;}
 .empty .icon{font-size:2.8rem;margin-bottom:14px;}
@@ -52,52 +36,44 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
    (transform:scale) to fit the viewport — so phones see the exact same
    classic bracket with NO horizontal scrolling. */
 .bracket-outer{width:100%;overflow:hidden;}
-.bracket-wrap{display:flex;flex-direction:row;align-items:stretch;width:max-content;transform-origin:top left;padding-top:4px;}
-.bracket-round{display:flex;flex-direction:column;align-items:center;width:196px;flex-shrink:0;}
-.round-label{font-size:.66rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.14em;text-align:center;padding:2px 0 12px;width:100%;}
-.round-label::after{content:'';display:block;width:36px;height:2px;background:linear-gradient(90deg,transparent,#d4a017,transparent);margin:6px auto 0;}
-.bracket-slots{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:14px;width:100%;}
-.slot{width:182px;margin:0 auto;animation:fadeUp .4s ease both;}
+.bracket-wrap{display:flex;flex-direction:row;align-items:stretch;width:max-content;transform-origin:top left;padding-top:2px;}
+.bracket-round{display:flex;flex-direction:column;align-items:center;width:180px;flex-shrink:0;}
+.round-label{font-size:.8rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.08em;text-align:center;padding:0 0 8px;width:100%;}
+.round-label::after{content:'';display:block;width:36px;height:2px;background:linear-gradient(90deg,transparent,#d4a017,transparent);margin:4px auto 0;}
+.bracket-slots{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:12px;width:100%;}
+.slot{width:176px;margin:0 auto;animation:fadeUp .4s ease both;}
 .bracket-slots .slot:nth-child(2){animation-delay:.06s;}
 .bracket-slots .slot:nth-child(3){animation-delay:.12s;}
 .bracket-slots .slot:nth-child(4){animation-delay:.18s;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .d-conn{display:block;flex-shrink:0;align-self:center;}
 
-/* ============ GAME CARD ============ */
-.game-card{border:1.5px solid #e5c766;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 3px 12px rgba(180,130,0,.14);transition:transform .15s, box-shadow .15s;position:relative;}
+/* ============ GAME CARD (big fonts, no per-card header) ============ */
+.game-card{border:1.5px solid #e5c766;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 3px 12px rgba(180,130,0,.14);position:relative;}
 .game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#d4a017,#f5d78e,#d4a017);}
-.game-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,0,.24);}
-.round-tag{background:linear-gradient(135deg,#fdf3cf,#fbeeba);padding:4px 9px;font-size:.58rem;font-weight:800;color:#96700a;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;}
-.round-tag::before{content:'🏆';font-size:.62rem;}
-.meta-line{padding:5px 9px;font-size:.62rem;font-weight:700;color:#8a7a6a;background:#fbf8f2;border-bottom:1px solid #f0e8da;display:flex;flex-wrap:wrap;gap:2px 8px;line-height:1.45;}
+.meta-line{padding:6px 8px 5px;font-size:.82rem;font-weight:700;color:#7a6a58;background:#fbf8f2;border-bottom:1px solid #f0e8da;display:flex;flex-wrap:wrap;gap:2px 8px;line-height:1.4;}
 .meta-line a{color:#8a6c1c;text-decoration:underline;}
-.meta-line a:hover{color:#7d1a1a;}
-.team-line{display:flex;align-items:center;padding:9px 9px;gap:5px;border-bottom:1px solid #f7f2e8;}
+.team-line{display:flex;align-items:center;padding:9px 8px;gap:5px;border-bottom:1px solid #f7f2e8;}
 .team-line:last-child{border-bottom:none;}
 .team-line.win{background:linear-gradient(90deg,#eefbee,#f7fdf7);}
 .team-line.lose{opacity:.5;}
-.tname{flex:1;font-size:.8rem;font-weight:700;color:#222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+.tname{flex:1;font-size:1.02rem;font-weight:700;color:#222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
 .tname.tbd{color:#c2b49f;font-style:italic;font-weight:600;}
-.tname.pend{color:#a98416;font-style:italic;font-weight:600;font-size:.72rem;}
+.tname.pend{color:#a98416;font-style:italic;font-weight:700;font-size:.86rem;}
 .tname.adv{color:#8a6c1c;}
-.tscore{font-size:.78rem;font-weight:800;min-width:20px;text-align:right;color:#5c1010;flex-shrink:0;}
+.tscore{font-size:1rem;font-weight:800;min-width:24px;text-align:right;color:#5c1010;flex-shrink:0;}
 .tscore.wscore{color:#1a7d1a;}
-.wbadge{font-size:.54rem;font-weight:800;background:#1a7d1a;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;flex-shrink:0;}
-.tbd-card{border:1.5px dashed #d8cbb6;border-radius:12px;overflow:hidden;background:#fffdf8;}
-.tbd-card .round-tag{background:#f7f1e3;color:#b3a48d;}
-.tbd-card .round-tag::before{content:'⏳';}
+.wbadge{font-size:.66rem;font-weight:800;background:#1a7d1a;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;flex-shrink:0;}
+.tbd-card{border:1.5px dashed #d8cbb6;border-radius:10px;overflow:hidden;background:#fffdf8;}
 .tbd-card .meta-line{background:#fbf8f1;}
 
 /* ============ CHAMPION ============ */
-.champ-box{width:182px;margin:0 auto;border:2px solid #d4a017;border-radius:16px;padding:22px 12px;text-align:center;background:linear-gradient(150deg,#fdf6dd,#fffdf4 60%,#fdf3cf);box-shadow:0 6px 26px rgba(180,130,0,.3), inset 0 1px 0 rgba(255,255,255,.8);position:relative;overflow:hidden;}
-.champ-box::before{content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:140px;height:70px;background:radial-gradient(ellipse,rgba(245,215,142,.65),transparent 70%);}
+.champ-box{width:176px;margin:0 auto;border:2px solid #d4a017;border-radius:14px;padding:16px 10px;text-align:center;background:linear-gradient(150deg,#fdf6dd,#fffdf4 60%,#fdf3cf);box-shadow:0 6px 26px rgba(180,130,0,.3), inset 0 1px 0 rgba(255,255,255,.8);position:relative;overflow:hidden;}
 .champ-box::after{content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:sweep 4s ease-in-out infinite;}
 @keyframes sweep{0%,55%{left:-80%;}85%,100%{left:130%;}}
-.champ-box .ci{font-size:2.2rem;margin-bottom:8px;filter:drop-shadow(0 3px 8px rgba(180,130,0,.4));}
-.champ-box .cl{font-size:.58rem;font-weight:800;color:#96700a;text-transform:uppercase;letter-spacing:.2em;margin-bottom:8px;}
-.champ-box .cn{font-size:1rem;font-weight:800;color:#5c1010;}
-.champ-box .ctbd{font-size:.82rem;color:#c2b49f;font-style:italic;}
+.champ-box .ci{font-size:2rem;margin-bottom:6px;filter:drop-shadow(0 3px 8px rgba(180,130,0,.4));}
+.champ-box .cn{font-size:1.1rem;font-weight:800;color:#5c1010;}
+.champ-box .ctbd{font-size:.95rem;color:#c2b49f;font-style:italic;}
 
 @media(prefers-reduced-motion:reduce){
   .header::after,.header .trophy,.champ-box::after,.slot{animation:none;}
@@ -107,9 +83,7 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
 <body>
 
 <div class="header">
-  <div class="trophy">🏆</div>
-  <h1>2026 Playoffs</h1>
-  <div class="sub">NA Coptic League · Road to the Championship</div>
+  <h1>🏆 2026 Playoffs</h1>
 </div>
 
 <div class="filters">
@@ -130,7 +104,6 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
 </div>
 
 <div class="main">
-<div id="dbg" style="text-align:center;font-size:.66rem;color:#c5b8a5;margin-bottom:10px;"></div>
 <div id="out">
   <div class="empty"><div class="icon">🏆</div><h3>Select a Division</h3><p>Choose a division to view the playoff bracket.</p></div>
 </div>
@@ -183,7 +156,6 @@ function loadGames(){
         g.date = normDate(g.date);
         return g;
       });
-      document.getElementById('dbg').textContent = GAMES.length+' games loaded';
       var dv=document.getElementById('fdiv').value;
       if(dv)renderBracket();
     })
@@ -325,7 +297,7 @@ function buildDivRounds(div){
     var p = pairRound(r1slots, r2, 2);
     var r1display = p.prevOrder.map(function(idx){return r1slots[idx];});
     rounds.push({label:'First Round', slots:r1display});
-    rounds.push({label:'Round 2', slots:p.slots});
+    rounds.push({label: isHS?'Second Round':'Round 2', slots:p.slots});
     // Division final fed by the two Round 2 games.
     var p2 = pairRound(p.slots, sf, 1);
     var dfSlot = p2.slots[0]||null;
@@ -333,7 +305,7 @@ function buildDivRounds(div){
     if(p2.prevOrder.length===p.slots.length && (p2.prevOrder[0]!==0)){
       rounds[1].slots = p2.prevOrder.map(function(idx){return p.slots[idx];});
     }
-    rounds.push({label: isHS?'Division Final':'Semifinals', slots:[dfSlot]});
+    rounds.push({label:'Semifinals', slots:[dfSlot]});
     var dfW = slotWinner(dfSlot);
     return {rounds:rounds, champion:dfW, lastWinners:[dfW,null]};
   } else {
@@ -341,7 +313,7 @@ function buildDivRounds(div){
     var ps = pairRound(r1slots, sf, 2);
     var qfDisplay = ps.prevOrder.map(function(idx){return r1slots[idx];});
     rounds.push({label:'Quarterfinals', slots:qfDisplay});
-    rounds.push({label: isHS?'Division Finals':'Semifinals', slots:ps.slots});
+    rounds.push({label:'Semifinals', slots:ps.slots});
     var sw = ps.slots.map(slotWinner);
     return {rounds:rounds, champion:null, lastWinners:[sw[0]||null, sw[1]||null]};
   }
@@ -378,7 +350,7 @@ function renderBracket(){
 
   var fSlot, fTbdLabels=null, fLabel;
   if(isHS){
-    fLabel = 'HS Championship';
+    fLabel = 'Championship';
     fSlot = buildSlot(f[0]||null, divChampion('HS-NY'), divChampion('HS-NJ'));
     fTbdLabels = ['HS-NY Champion','HS-NJ Champion'];
   } else {
@@ -389,12 +361,11 @@ function renderBracket(){
 
   var champ = slotWinner(fSlot);
 
-  var html = '<div class="div-title"><h2>🏆 '+ (DIV_LABELS[div]||div) +' Division</h2></div>';
+  var html = '';
   if(isHS){
     var other = div==='HS-NY' ? 'HS-NJ' : 'HS-NY';
-    html += '<div class="hs-note">⚔️ The '+div+' champion faces the '+other+' champion in the HS Championship — July 26</div>';
+    html += '<div class="hs-note">'+div+' champ vs '+other+' champ · HS Championship · Jul 26</div>';
   }
-  html += '<div class="legend"><span><span class="dot g"></span>Winner</span><span><span class="dot gold"></span>Advanced / Projected</span><span><span class="dot t"></span>TBD</span></div>';
   html += '<div class="bracket-outer"><div class="bracket-wrap" id="bwrap">';
 
   for(var i=0;i<rounds.length;i++){
@@ -455,7 +426,7 @@ function gameCard(slot, roundLabel, tbdLabels){
   var tbd1 = (tbdLabels&&tbdLabels[0])||'TBD';
   var tbd2 = (tbdLabels&&tbdLabels[1])||'TBD';
   if(!slot){
-    return '<div class="tbd-card"><div class="round-tag">'+roundLabel+'</div>'+
+    return '<div class="tbd-card">'+
       '<div class="team-line"><span class="tname tbd">'+tbd1+'</span></div>'+
       '<div class="team-line"><span class="tname tbd">'+tbd2+'</span></div></div>';
   }
@@ -471,7 +442,6 @@ function gameCard(slot, roundLabel, tbdLabels){
     return '';
   }
   return '<div class="'+cardClass+'">'+
-    '<div class="round-tag">'+roundLabel+'</div>'+
     metaHTML(slot)+
     '<div class="team-line'+(t1win?' win':w?' lose':'')+'">'+
       '<span class="tname'+nameClass(slot.t1,slot.pend1,slot.fed1)+'">'+t1+'</span>'+
@@ -489,7 +459,7 @@ function gameCard(slot, roundLabel, tbdLabels){
 /* Connector: SVG lines between bracket columns */
 function dConn(fromCount, toCount){
   var totalH = 4*128 + 3*14;
-  var w=30;
+  var w=20;
   var svg='<svg class="d-conn" width="'+w+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg">';
   var fromSpacing = totalH/fromCount;
   var toSpacing = totalH/toCount;
@@ -517,8 +487,7 @@ function champCol(champ, label){
     '<div class="bracket-slots" style="justify-content:center;">'+
     '<div class="slot"><div class="champ-box">'+
       '<div class="ci">🏆</div>'+
-      '<div class="cl">'+label+'</div>'+
-      (champ ? '<div class="cn">'+champ+'</div>' : '<div class="ctbd">To Be Crowned</div>')+
+      (champ ? '<div class="cn">'+champ+'</div>' : '')+
     '</div></div></div></div>';
 }
 
