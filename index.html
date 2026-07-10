@@ -80,6 +80,7 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
 .team-line.lose{opacity:.5;}
 .tname{flex:1;font-size:.78rem;font-weight:700;color:#222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .tname.tbd{color:#c2b49f;font-style:italic;font-weight:600;}
+.tname.adv{color:#8a6c1c;}
 .tscore{font-size:.76rem;font-weight:800;min-width:20px;text-align:right;color:#5c1010;}
 .tscore.wscore{color:#1a7d1a;}
 .wbadge{font-size:.54rem;font-weight:800;background:#1a7d1a;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;flex-shrink:0;}
@@ -212,25 +213,92 @@ function sortDT(a,b){
 function isPlaceholder(name){return !name || String(name).indexOf('/')>=0;}
 
 /*
-  Convert a scheduled game to a display slot.
-  IMPORTANT: teams are ONLY shown if the scheduled game has real names.
-  We never auto-advance a previous round's winner — future matchups stay TBD.
-  Date / time / venue always autopopulate from the scheduled game.
+  Build a display slot from a scheduled game plus the winners feeding into it.
+  - Team names: real names from the game if present; otherwise the winner of
+    the feeding game IF that game is decided (by winner flag OR by scores);
+    otherwise TBD.
+  - Date / time / venue always autopopulate from the scheduled game.
+  - Winner is taken from the explicit winner flag, or derived from scores.
+  - fed1/fed2 flags mark names that advanced automatically (styled gold).
 */
-function toSlot(g){
-  if(!g) return null;
-  var t1 = isPlaceholder(g.t1)?null:g.t1;
-  var t2 = isPlaceholder(g.t2)?null:g.t2;
+function buildSlot(sched, feedW1, feedW2){
+  var t1=null, t2=null, fed1=false, fed2=false;
+  if(sched && !isPlaceholder(sched.t1)) t1=sched.t1;
+  else if(feedW1){ t1=feedW1; fed1=true; }
+  if(sched && !isPlaceholder(sched.t2)) t2=sched.t2;
+  else if(feedW2){ t2=feedW2; fed2=true; }
+
+  var s1 = sched ? (sched.s1!==undefined&&sched.s1!==null?String(sched.s1):'') : '';
+  var s2 = sched ? (sched.s2!==undefined&&sched.s2!==null?String(sched.s2):'') : '';
+  var win = '';
+  if(t1 && t2 && sched){
+    if(sched.winner==='t1'||sched.winner==='t2'){
+      win = sched.winner;
+    } else if(s1!=='' && s2!=='' && !isNaN(+s1) && !isNaN(+s2) && +s1!==+s2){
+      win = (+s1 > +s2) ? 't1' : 't2';   // derive winner from scores
+    }
+  }
   return {
-    t1:t1, t2:t2,
-    date:g.date||null, time:g.time||null, v:g.v||null,
-    winner:(t1&&t2)?(g.winner||''):'',
-    s1:(t1&&t2)?(g.s1||''):'', s2:(t1&&t2)?(g.s2||''):''
+    t1:t1, t2:t2, fed1:fed1, fed2:fed2,
+    date:sched?sched.date:null, time:sched?sched.time:null, v:sched?sched.v:null,
+    winner:win,
+    s1:(t1&&t2)?s1:'', s2:(t1&&t2)?s2:''
   };
 }
 function slotWinner(slot){
   if(!slot||!slot.winner)return null;
   return slot.winner==='t1'?slot.t1:slot.t2;
+}
+
+/*
+  Build the full in-division round structure with winners flowing forward.
+  Returns { rounds:[{label,slots}], champion, lastWinners }
+  - champion: division champ (winner of the last in-division game) or null
+  - lastWinners: winners of the last round's games (for feeding a Finals game)
+*/
+function buildDivRounds(div){
+  var isHS = (div==='HS-NY'||div==='HS-NJ');
+  var dg = GAMES.filter(function(g){return normDiv(g.div)===normDiv(div);});
+  var r1 = dg.filter(function(g){return g.date===R1_DATE;}).sort(sortDT);
+  var r2 = dg.filter(function(g){return g.date===R2_DATE;}).sort(sortDT);
+  var sf = dg.filter(function(g){return SF_DATES.indexOf(g.date)>=0;}).sort(sortDT);
+  var twoStage = r2.length > 0;
+
+  var rounds = [];
+  var r1slots = [];
+  for(var i=0;i<Math.max(4,r1.length);i++) r1slots.push(r1[i]?buildSlot(r1[i],null,null):null);
+  rounds.push({label: twoStage?'First Round':'Quarterfinals', slots:r1slots});
+  var w1 = r1slots.map(slotWinner);
+
+  if(twoStage){
+    var r2slots = [
+      buildSlot(r2[0]||null, w1[0]||null, w1[1]||null),
+      buildSlot(r2[1]||null, w1[2]||null, w1[3]||null)
+    ];
+    rounds.push({label:'Round 2', slots:r2slots});
+    var w2 = r2slots.map(slotWinner);
+    var dfSlot = buildSlot(sf[0]||null, w2[0]||null, w2[1]||null);
+    rounds.push({label: isHS?'Division Final':'Semifinals', slots:[dfSlot]});
+    var dfW = slotWinner(dfSlot);
+    return {rounds:rounds, champion:dfW, lastWinners:[dfW,null]};
+  } else {
+    var sfSlots = [
+      buildSlot(sf[0]||null, w1[0]||null, w1[1]||null),
+      buildSlot(sf[1]||null, w1[2]||null, w1[3]||null)
+    ];
+    rounds.push({label: isHS?'Division Finals':'Semifinals', slots:sfSlots});
+    var sw = sfSlots.map(slotWinner);
+    return {rounds:rounds, champion:null, lastWinners:[sw[0]||null, sw[1]||null]};
+  }
+}
+
+/* Division champion helper (used for the cross-division HS Championship). */
+function divChampion(div){
+  var b = buildDivRounds(div);
+  if(b.champion) return b.champion;
+  // Single-stage bracket: if only one last-round winner exists we still can't
+  // name a champion without the in-division final — return null (TBD).
+  return null;
 }
 
 function renderBracket(){
@@ -240,12 +308,9 @@ function renderBracket(){
 
   var isHS = (div==='HS-NY'||div==='HS-NJ');
   var dg = GAMES.filter(function(g){return normDiv(g.div)===normDiv(div);});
-  var r1 = dg.filter(function(g){return g.date===R1_DATE;}).sort(sortDT);
-  var r2 = dg.filter(function(g){return g.date===R2_DATE;}).sort(sortDT);
-  var sf = dg.filter(function(g){return SF_DATES.indexOf(g.date)>=0;}).sort(sortDT);
 
-  // HS Championship (July 26) is cross-division: HS-NY champ vs HS-NJ champ.
-  // The game may be tagged HS, HS-NY, or HS-NJ in the sheet — match any HS* div.
+  // Finals game: for HS divisions the July 26 game is the cross-division
+  // HS Championship — it may be tagged HS, HS-NY, or HS-NJ in the sheet.
   var f;
   if(isHS){
     f = GAMES.filter(function(g){return F_DATES.indexOf(g.date)>=0 && normDiv(g.div).indexOf('HS')===0;}).sort(sortDT);
@@ -253,35 +318,37 @@ function renderBracket(){
     f = dg.filter(function(g){return F_DATES.indexOf(g.date)>=0;}).sort(sortDT);
   }
 
-  if(!r1.length&&!r2.length&&!sf.length&&!f.length){
-    var poCount=dg.filter(function(g){return ALL_PO.indexOf(g.date)>=0;}).length;
-    out.innerHTML='<div class="empty"><div class="icon">📅</div><h3>No Playoff Games Yet</h3><p>The '+div+' bracket will appear once games are scheduled.<br><br><span style="font-size:.72rem;color:#bbb;">Debug: '+GAMES.length+' total · '+dg.length+' in division · '+poCount+' on playoff dates</span></p></div>';
+  var anyPO = dg.some(function(g){return ALL_PO.indexOf(g.date)>=0;}) || f.length>0;
+  if(!anyPO){
+    out.innerHTML='<div class="empty"><div class="icon">📅</div><h3>No Playoff Games Yet</h3><p>The '+div+' bracket will appear once games are scheduled.<br><br><span style="font-size:.72rem;color:#bbb;">Debug: '+GAMES.length+' total · '+dg.length+' in division</span></p></div>';
     return;
   }
 
-  var twoStage = r2.length > 0;
+  var b = buildDivRounds(div);
+  var rounds = b.rounds;
 
-  // Build round structure. Slots come straight from scheduled games; missing games render as TBD.
-  var rounds = [];
-  rounds.push({label: twoStage?'First Round':'Quarterfinals', slots: padSlots(r1, 4)});
-  if(twoStage) rounds.push({label:'Round 2', slots: padSlots(r2, 2)});
-  var sfCount = twoStage ? 1 : 2;
-  var sfLabel = isHS ? (sfCount===1?'Division Final':'Semifinals') : 'Semifinals';
-  rounds.push({label: sfLabel, slots: padSlots(sf, sfCount)});
-  rounds.push({
-    label: isHS ? 'HS Championship' : 'Finals',
-    slots: padSlots(f, 1),
-    tbdLabels: isHS ? ['HS-NY Champion','HS-NJ Champion'] : null
-  });
+  // Finals / HS Championship slot with winners auto-fed from scores.
+  var fSlot, fTbdLabels=null, fLabel;
+  if(isHS){
+    fLabel = 'HS Championship';
+    var champNY = divChampion('HS-NY');
+    var champNJ = divChampion('HS-NJ');
+    fSlot = buildSlot(f[0]||null, champNY, champNJ);
+    fTbdLabels = ['HS-NY Champion','HS-NJ Champion'];
+  } else {
+    fLabel = 'Finals';
+    fSlot = buildSlot(f[0]||null, b.lastWinners[0], b.lastWinners[1]);
+  }
+  rounds.push({label:fLabel, slots:[fSlot], tbdLabels:fTbdLabels});
 
-  var champ = slotWinner(rounds[rounds.length-1].slots[0]);
+  var champ = slotWinner(fSlot);
 
   var html = '<div class="div-title"><h2>🏆 '+ (DIV_LABELS[div]||div) +' Division</h2></div>';
   if(isHS){
     var other = div==='HS-NY' ? 'HS-NJ' : 'HS-NY';
     html += '<div class="hs-note">⚔️ The '+div+' champion faces the '+other+' champion in the HS Championship — July 26</div>';
   }
-  html += '<div class="legend"><span><span class="dot g"></span>Winner</span><span><span class="dot gold"></span>Scheduled</span><span><span class="dot t"></span>TBD</span></div>';
+  html += '<div class="legend"><span><span class="dot g"></span>Winner</span><span><span class="dot gold"></span>Advanced</span><span><span class="dot t"></span>TBD</span></div>';
   html += '<div class="bracket-wrap">';
 
   for(var i=0;i<rounds.length;i++){
@@ -297,13 +364,6 @@ function renderBracket(){
 
   html += '</div>';
   out.innerHTML = html;
-}
-
-function padSlots(games, count){
-  var slots=[];
-  var n=Math.max(count, games.length);
-  for(var i=0;i<n;i++) slots.push(toSlot(games[i]||null));
-  return slots;
 }
 
 function roundCol(round){
@@ -345,12 +405,12 @@ function gameCard(slot, roundLabel, tbdLabels){
     '<div class="round-tag">'+roundLabel+'</div>'+
     metaHTML(slot)+
     '<div class="team-line'+(t1win?' win':w?' lose':'')+'">'+
-      '<span class="tname'+(!slot.t1?' tbd':'')+'">'+t1+'</span>'+
+      '<span class="tname'+(!slot.t1?' tbd':(slot.fed1?' adv':''))+'">'+t1+'</span>'+
       (slot.s1?'<span class="tscore'+(t1win?' wscore':'')+'">'+slot.s1+'</span>':'')+
       (t1win?'<span class="wbadge">W</span>':'')+
     '</div>'+
     '<div class="team-line'+(t2win?' win':w?' lose':'')+'">'+
-      '<span class="tname'+(!slot.t2?' tbd':'')+'">'+t2+'</span>'+
+      '<span class="tname'+(!slot.t2?' tbd':(slot.fed2?' adv':''))+'">'+t2+'</span>'+
       (slot.s2?'<span class="tscore'+(t2win?' wscore':'')+'">'+slot.s2+'</span>':'')+
       (t2win?'<span class="wbadge">W</span>':'')+
     '</div>'+
