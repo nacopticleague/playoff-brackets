@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 NA Coptic League – Playoffs</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#fff;min-height:100vh;}
+
+/* Header */
+.header{background:#7d1a1a;padding:22px 20px 18px;text-align:center;position:relative;overflow:hidden;}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#c9b5a5,#d4a017,#c9b5a5);}
+.header h1{font-size:1.4rem;color:#f5d78e;font-weight:800;letter-spacing:.02em;}
+.header .sub{font-size:.72rem;color:#c98a8a;margin-top:4px;letter-spacing:.1em;font-weight:600;}
+
+/* Filters */
+.filters{background:#d8c8ba;border-bottom:2px solid #b8a492;padding:14px 16px;}
+.filter-row{display:flex;gap:12px;flex-wrap:wrap;max-width:900px;margin:0 auto;}
+.fg{flex:1;min-width:160px;}
+.fg label{display:block;font-size:.68rem;font-weight:700;color:#5c1010;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
+.fg select{width:100%;padding:9px 12px;border:2px solid #b8a492;border-radius:6px;font-size:.88rem;font-weight:600;color:#5c1010;background:#fff;cursor:pointer;}
+.fg select:focus{outline:none;border-color:#7d1a1a;}
+
+/* Main */
+.main{max-width:900px;margin:0 auto;padding:20px 14px 40px;}
+
+/* Division title */
+.div-title{text-align:center;margin-bottom:24px;}
+.div-title h2{font-size:1.2rem;font-weight:800;color:#5c1010;text-transform:uppercase;letter-spacing:.06em;}
+.div-title .trophy{font-size:1.6rem;margin-bottom:4px;}
+
+/* Bracket container */
+.bracket{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:10px;}
+
+/* Round column */
+.round-col{display:flex;flex-direction:column;gap:0;flex-shrink:0;}
+.round-label{text-align:center;font-size:.65rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.1em;padding:6px 0 10px;min-width:160px;}
+.round-label.finals-label{color:#b8860b;}
+
+/* Connector lines */
+.connectors{display:flex;flex-direction:column;justify-content:space-around;flex-shrink:0;}
+.connector-group{display:flex;flex-direction:column;align-items:flex-start;flex:1;}
+.connector-pair{display:flex;flex-direction:column;justify-content:space-between;flex:1;}
+
+/* Matchup card */
+.matchup{width:160px;border:2px solid #d8c8ba;border-radius:8px;overflow:hidden;margin:6px 0;background:#fff;box-shadow:0 2px 8px rgba(80,20,20,.08);}
+.matchup.playoff{border-color:#d4a017;}
+.matchup.finals{border-color:#d4a017;box-shadow:0 2px 12px rgba(180,130,0,.25);}
+.matchup-header{background:#f5f0e8;padding:3px 8px;font-size:.58rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #e8ddd3;}
+.matchup.finals .matchup-header{background:#fdf5d8;}
+.team-row{display:flex;align-items:center;padding:7px 8px;border-bottom:1px solid #f0e8e0;gap:6px;}
+.team-row:last-child{border-bottom:none;}
+.team-row.winner{background:#f0fbf0;}
+.team-row.loser{opacity:.6;}
+.seed{font-size:.6rem;font-weight:800;color:#b8a492;min-width:14px;}
+.team-name{flex:1;font-size:.75rem;font-weight:700;color:#222;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.team-name.tbd{color:#b8a492;font-style:italic;font-weight:400;}
+.score{font-size:.72rem;font-weight:800;color:#5c1010;min-width:20px;text-align:right;}
+.score.win-score{color:#1a7d1a;}
+.w-badge{font-size:.58rem;font-weight:800;background:#1a7d1a;color:#fff;padding:1px 5px;border-radius:3px;margin-left:3px;}
+
+/* Champion */
+.champion-box{width:160px;border:2px solid #d4a017;border-radius:10px;padding:14px 10px;text-align:center;background:linear-gradient(135deg,#fdf8e4,#fff9ec);box-shadow:0 4px 16px rgba(180,130,0,.2);margin:6px 0;}
+.champion-box .trophy-icon{font-size:1.8rem;margin-bottom:6px;}
+.champion-box .champ-label{font-size:.6rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
+.champion-box .champ-name{font-size:.9rem;font-weight:800;color:#5c1010;}
+.champion-box .champ-tbd{font-size:.8rem;color:#b8a492;font-style:italic;}
+
+/* SVG connectors */
+.svg-connector{flex-shrink:0;}
+
+/* Empty state */
+.empty{text-align:center;padding:48px 20px;}
+.empty .icon{font-size:2.6rem;margin-bottom:12px;}
+.empty h3{color:#5c1010;font-size:1rem;margin-bottom:6px;font-weight:700;}
+.empty p{font-size:.85rem;color:#666;line-height:1.6;}
+
+/* Legend */
+.legend{display:flex;gap:16px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.7rem;color:#555;font-weight:600;}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+.legend-dot.win{background:#1a7d1a;}
+.legend-dot.tbd{background:#d8c8ba;}
+.legend-dot.gold{background:#d4a017;}
+
+@media(max-width:600px){
+  .matchup{width:140px;}
+  .champion-box{width:140px;}
+  .round-label{min-width:140px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:1.4rem;margin-bottom:4px;">🏆</div>
+  <h1>2026 Playoffs</h1>
+  <div class="sub">NA Coptic League · Championship Bracket</div>
+</div>
+
+<div class="filters">
+  <div class="filter-row">
+    <div class="fg">
+      <label>Division</label>
+      <select id="fdiv" onchange="renderBracket()">
+        <option value="">— Select Division —</option>
+        <option value="JHS">Junior High (JHS)</option>
+        <option value="Girls">Girls</option>
+        <option value="HS-NY">High School — NY</option>
+        <option value="HS-NJ">High School — NJ</option>
+        <option value="College">College</option>
+        <option value="Mens">Mens</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div id="out">
+    <div class="empty">
+      <div class="icon">🏆</div>
+      <h3>Select a Division</h3>
+      <p>Choose a division above to view the playoff bracket.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+var PLAYOFF_ROUNDS = {
+  "2026-07-11":"QF","2026-07-12":"QF",
+  "2026-07-18":"SF","2026-07-19":"SF",
+  "2026-07-26":"F"
+};
+var ROUND_LABELS = {QF:"First Round",SF:"Semifinals",F:"Finals"};
+var GAMES = [];
+
+function loadGames(){
+  fetch('data/games.json?_='+Date.now())
+    .then(function(r){return r.json();})
+    .then(function(d){
+      GAMES = Array.isArray(d)?d:[];
+      var div = document.getElementById('fdiv').value;
+      if(div) renderBracket();
+    })
+    .catch(function(){});
+}
+
+function getWinner(g){
+  if(!g.winner) return null;
+  return g.winner==='t1'?g.t1:g.t2;
+}
+function getLoser(g){
+  if(!g.winner) return null;
+  return g.winner==='t1'?g.t2:g.t1;
+}
+
+function makeMatchup(g, roundLabel, isF){
+  if(!g) return '<div class="matchup'+(isF?' finals':' playoff')+'"><div class="matchup-header">'+roundLabel+'</div><div class="team-row"><span class="seed"></span><span class="team-name tbd">TBD</span></div><div class="team-row"><span class="seed"></span><span class="team-name tbd">TBD</span></div></div>';
+  var w=getWinner(g), loser=getLoser(g);
+  var t1class=w?(g.winner==='t1'?' winner':' loser'):'';
+  var t2class=w?(g.winner==='t2'?' winner':' loser'):'';
+  var t1score=g.s1?'<span class="score'+(g.winner==='t1'?' win-score':'')+'">'+g.s1+'</span>':'';
+  var t2score=g.s2?'<span class="score'+(g.winner==='t2'?' win-score':'')+'">'+g.s2+'</span>':'';
+  var t1badge=g.winner==='t1'?'<span class="w-badge">W</span>':'';
+  var t2badge=g.winner==='t2'?'<span class="w-badge">W</span>':'';
+  return '<div class="matchup'+(isF?' finals':' playoff')+'">'+
+    '<div class="matchup-header">'+roundLabel+'</div>'+
+    '<div class="team-row'+t1class+'"><span class="team-name">'+g.t1+'</span>'+t1score+t1badge+'</div>'+
+    '<div class="team-row'+t2class+'"><span class="team-name">'+g.t2+'</span>'+t2score+t2badge+'</div>'+
+    '</div>';
+}
+
+function svgLine(h1, h2, dir){
+  // h1 = height of top slot, h2 = height of bottom slot
+  var w=32, totalH=h1+h2;
+  return '<svg class="svg-connector" width="'+w+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg">'+
+    '<path d="M0,'+(h1/2)+' H'+(w/2)+' V'+(totalH-h2/2)+' H'+w+'" fill="none" stroke="#d4a017" stroke-width="2"/>'+
+    '<path d="M0,'+(totalH-h2/2)+' H'+(w/2)+'" fill="none" stroke="#d4a017" stroke-width="2" opacity="0"/>'+
+    '</svg>';
+}
+
+function renderBracket(){
+  var div = document.getElementById('fdiv').value;
+  var out = document.getElementById('out');
+  if(!div){out.innerHTML='<div class="empty"><div class="icon">🏆</div><h3>Select a Division</h3><p>Choose a division above.</p></div>';return;}
+
+  // Get playoff games for this division
+  var qfGames=[], sfGames=[], fGames=[];
+  GAMES.forEach(function(g){
+    if(g.div!==div) return;
+    var round=PLAYOFF_ROUNDS[g.date];
+    if(round==='QF') qfGames.push(g);
+    else if(round==='SF') sfGames.push(g);
+    else if(round==='F') fGames.push(g);
+  });
+
+  if(!qfGames.length&&!sfGames.length&&!fGames.length){
+    out.innerHTML='<div class="empty"><div class="icon">📅</div><h3>No Playoff Games Yet</h3><p>Playoff bracket for '+div+' will appear here once games are scheduled.</p></div>';
+    return;
+  }
+
+  // Pad to 4 QF, 2 SF, 1 F
+  while(qfGames.length<4) qfGames.push(null);
+  while(sfGames.length<2) sfGames.push(null);
+  var fGame = fGames[0]||null;
+
+  // Champion
+  var champ = fGame&&fGame.winner ? getWinner(fGame) : null;
+
+  var CARD_H = 74; // height of each matchup card
+  var GAP = 12;    // gap between cards
+
+  // QF section heights (pairs)
+  var qfPairH = CARD_H*2+GAP;
+
+  var divLabels = {"JHS":"Junior High","Girls":"Girls","HS-NY":"High School NY","HS-NJ":"High School NJ","College":"College","Mens":"Mens"};
+
+  var h = '<div class="div-title"><div class="trophy">🏆</div><h2>'+divLabels[div]+' Division</h2></div>';
+  h += '<div class="legend"><div class="legend-item"><div class="legend-dot win"></div>Winner</div><div class="legend-item"><div class="legend-dot tbd"></div>Awaiting result</div><div class="legend-item"><div class="legend-dot gold"></div>Playoff game</div></div>';
+
+  h += '<div class="bracket">';
+
+  // QF column
+  h += '<div class="round-col">';
+  h += '<div class="round-label">'+ROUND_LABELS.QF+'</div>';
+  h += makeMatchup(qfGames[0],'Quarterfinal',false);
+  h += '<div style="height:'+GAP+'px;"></div>';
+  h += makeMatchup(qfGames[1],'Quarterfinal',false);
+  h += '<div style="height:'+(CARD_H+GAP*2)+'px;"></div>';
+  h += makeMatchup(qfGames[2],'Quarterfinal',false);
+  h += '<div style="height:'+GAP+'px;"></div>';
+  h += makeMatchup(qfGames[3],'Quarterfinal',false);
+  h += '</div>';
+
+  // Connector QF→SF
+  h += '<svg width="32" height="'+(CARD_H*4+GAP*5)+'" xmlns="http://www.w3.org/2000/svg">';
+  var mid1 = CARD_H/2;
+  var mid2 = CARD_H+GAP+CARD_H/2;
+  var sfMid1 = (mid1+mid2)/2;
+  h += '<line x1="0" y1="'+mid1+'" x2="16" y2="'+mid1+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="0" y1="'+mid2+'" x2="16" y2="'+mid2+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="16" y1="'+mid1+'" x2="16" y2="'+mid2+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="16" y1="'+sfMid1+'" x2="32" y2="'+sfMid1+'" stroke="#d4a017" stroke-width="2"/>';
+  var bot1 = CARD_H*2+GAP*3+CARD_H/2;
+  var bot2 = CARD_H*3+GAP*3+GAP+CARD_H/2;
+  var sfMid2 = (bot1+bot2)/2;
+  h += '<line x1="0" y1="'+bot1+'" x2="16" y2="'+bot1+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="0" y1="'+bot2+'" x2="16" y2="'+bot2+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="16" y1="'+bot1+'" x2="16" y2="'+bot2+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="16" y1="'+sfMid2+'" x2="32" y2="'+sfMid2+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '</svg>';
+
+  // SF column
+  var sfTopOffset = CARD_H+GAP/2;
+  h += '<div class="round-col">';
+  h += '<div class="round-label">'+ROUND_LABELS.SF+'</div>';
+  h += '<div style="height:'+sfTopOffset+'px;"></div>';
+  h += makeMatchup(sfGames[0],'Semifinal',false);
+  h += '<div style="height:'+sfTopOffset+'px;"></div>';
+  h += makeMatchup(sfGames[1],'Semifinal',false);
+  h += '</div>';
+
+  // Connector SF→F
+  var sfH = sfTopOffset*2+CARD_H*2+GAP;
+  h += '<svg width="32" height="'+sfH+'" xmlns="http://www.w3.org/2000/svg">';
+  var sfm1 = sfTopOffset+CARD_H/2;
+  var sfm2 = sfTopOffset+CARD_H+GAP+CARD_H/2;
+  var fMid = (sfm1+sfm2)/2;
+  h += '<line x1="0" y1="'+sfm1+'" x2="16" y2="'+sfm1+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="0" y1="'+sfm2+'" x2="16" y2="'+sfm2+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="16" y1="'+sfm1+'" x2="16" y2="'+sfm2+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '<line x1="16" y1="'+fMid+'" x2="32" y2="'+fMid+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '</svg>';
+
+  // Finals column
+  var fTopOffset = sfTopOffset+CARD_H/2+GAP/2;
+  h += '<div class="round-col">';
+  h += '<div class="round-label finals-label">'+ROUND_LABELS.F+'</div>';
+  h += '<div style="height:'+fTopOffset+'px;"></div>';
+  h += makeMatchup(fGame,'Championship',true);
+  h += '</div>';
+
+  // Connector F→Champion
+  h += '<svg width="32" height="'+(fTopOffset+CARD_H)+'" xmlns="http://www.w3.org/2000/svg">';
+  var fm = fTopOffset+CARD_H/2;
+  h += '<line x1="0" y1="'+fm+'" x2="32" y2="'+fm+'" stroke="#d4a017" stroke-width="2"/>';
+  h += '</svg>';
+
+  // Champion
+  h += '<div class="round-col">';
+  h += '<div class="round-label finals-label">Champion</div>';
+  h += '<div style="height:'+fTopOffset+'px;"></div>';
+  h += '<div class="champion-box">';
+  h += '<div class="trophy-icon">🏆</div>';
+  h += '<div class="champ-label">Champion</div>';
+  if(champ){
+    h += '<div class="champ-name">'+champ+'</div>';
+  } else {
+    h += '<div class="champ-tbd">TBD</div>';
+  }
+  h += '</div></div>';
+
+  h += '</div>'; // end bracket
+
+  out.innerHTML = h;
+}
+
+loadGames();
+</script>
+</body>
+</html>
