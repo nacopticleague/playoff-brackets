@@ -6,30 +6,37 @@
 <title>2026 NA Coptic League – Playoffs</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Arial,sans-serif;background:#fdfcfa;min-height:100vh;}
+html{overflow-x:hidden;}
+body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
 
-/* Header */
-.header{background:linear-gradient(160deg,#5c1010 0%,#7d1a1a 55%,#8f2222 100%);padding:28px 20px 24px;text-align:center;position:relative;overflow:hidden;}
-.header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.18),transparent 70%);}
-.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#d4a017 30%,#f5d78e 50%,#d4a017 70%,transparent);}
-.header .trophy{font-size:1.8rem;margin-bottom:6px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));}
-.header h1{font-size:1.5rem;color:#f5d78e;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.3);}
-.header .sub{font-size:.68rem;color:#d9a3a3;margin-top:5px;letter-spacing:.18em;font-weight:700;text-transform:uppercase;}
+/* ============ HEADER ============ */
+.header{background:linear-gradient(160deg,#4a0d0d 0%,#5c1010 35%,#7d1a1a 70%,#8f2222 100%);padding:30px 20px 26px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(circle at 85% -20%,rgba(212,160,23,.22),transparent 55%),
+  radial-gradient(circle at 10% 120%,rgba(212,160,23,.12),transparent 50%),
+  repeating-linear-gradient(115deg,transparent 0 22px,rgba(255,255,255,.025) 22px 24px);}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#d4a017 25%,#f5d78e 50%,#d4a017 75%,transparent);background-size:200% 100%;animation:shine 5s linear infinite;}
+@keyframes shine{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.header .trophy{font-size:2rem;margin-bottom:6px;position:relative;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4));animation:bob 3.5s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+.header h1{font-size:1.6rem;color:#f5d78e;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 2px 10px rgba(0,0,0,.35);position:relative;}
+.header .sub{font-size:.66rem;color:#dcaaaa;margin-top:6px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;position:relative;}
 
-/* Filters */
-.filters{background:#d8c8ba;border-bottom:2px solid #b8a492;padding:14px 16px;}
+/* ============ FILTERS ============ */
+.filters{background:#d8c8ba;border-bottom:2px solid #b8a492;padding:14px 16px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(92,16,16,.08);}
 .filter-row{display:flex;gap:12px;flex-wrap:wrap;max-width:1000px;margin:0 auto;}
 .fg{flex:1;min-width:160px;}
-.fg label{display:block;font-size:.68rem;font-weight:700;color:#5c1010;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
-.fg select{width:100%;padding:10px 12px;border:2px solid #b8a492;border-radius:8px;font-size:.9rem;font-weight:700;color:#5c1010;background:#fff;cursor:pointer;transition:border-color .2s, box-shadow .2s;}
-.fg select:focus{outline:none;border-color:#d4a017;box-shadow:0 0 0 3px rgba(212,160,23,.2);}
+.fg label{display:block;font-size:.66rem;font-weight:800;color:#5c1010;text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px;}
+.fg select{width:100%;padding:11px 12px;border:2px solid #b8a492;border-radius:10px;font-size:.92rem;font-weight:700;color:#5c1010;background:#fff;cursor:pointer;transition:border-color .2s, box-shadow .2s;}
+.fg select:focus{outline:none;border-color:#d4a017;box-shadow:0 0 0 3px rgba(212,160,23,.25);}
 
-/* Main */
-.main{max-width:1000px;margin:0 auto;padding:24px 14px 48px;overflow-x:auto;}
+/* ============ MAIN ============ */
+.main{max-width:1000px;margin:0 auto;padding:22px 12px 48px;}
 .div-title{text-align:center;margin-bottom:6px;}
-.div-title h2{display:inline-flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:800;color:#5c1010;text-transform:uppercase;letter-spacing:.08em;padding:8px 22px;border:1.5px solid #e8d9a0;border-radius:24px;background:linear-gradient(135deg,#fdf8e4,#fffdf5);box-shadow:0 2px 10px rgba(180,130,0,.1);}
-.legend{display:flex;gap:18px;justify-content:center;margin:14px 0 22px;flex-wrap:wrap;}
-.legend span{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;font-weight:700;color:#8a7a6a;text-transform:uppercase;letter-spacing:.05em;}
+.div-title h2{display:inline-flex;align-items:center;gap:8px;font-size:1.02rem;font-weight:800;color:#5c1010;text-transform:uppercase;letter-spacing:.08em;padding:9px 24px;border:1.5px solid #e8d9a0;border-radius:26px;background:linear-gradient(135deg,#fdf8e4,#fffdf5);box-shadow:0 3px 12px rgba(180,130,0,.14);}
+.hs-note{max-width:420px;margin:10px auto 0;text-align:center;font-size:.7rem;font-weight:700;color:#96700a;background:linear-gradient(135deg,#fdf6dd,#fffdf4);border:1px dashed #e5c766;border-radius:10px;padding:8px 14px;line-height:1.5;}
+.legend{display:flex;gap:16px;justify-content:center;margin:14px 0 20px;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:700;color:#8a7a6a;text-transform:uppercase;letter-spacing:.05em;}
 .dot{width:9px;height:9px;border-radius:50%;}
 .dot.g{background:#1a7d1a;}
 .dot.gold{background:#d4a017;}
@@ -40,29 +47,40 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;min-height:100vh;}
 .empty h3{color:#5c1010;font-size:1.05rem;margin-bottom:8px;font-weight:800;}
 .empty p{font-size:.85rem;color:#777;line-height:1.7;}
 
-/* Bracket layout */
-.bracket-wrap{display:flex;align-items:stretch;min-width:fit-content;padding-top:4px;}
-.bracket-round{display:flex;flex-direction:column;align-items:center;min-width:190px;}
-.round-label{font-size:.64rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.14em;text-align:center;padding:0 0 12px;width:100%;position:relative;}
-.round-label::after{content:'';display:block;width:34px;height:2px;background:linear-gradient(90deg,transparent,#d4a017,transparent);margin:6px auto 0;}
-.bracket-slots{display:flex;flex-direction:column;justify-content:space-around;flex:1;width:100%;}
+/* ============ BRACKET — MOBILE FIRST (vertical, no horizontal scroll) ============ */
+.bracket-wrap{display:flex;flex-direction:column;align-items:stretch;gap:0;width:100%;}
+.bracket-round{display:flex;flex-direction:column;align-items:center;width:100%;}
+.round-label{font-size:.72rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.16em;text-align:center;padding:2px 0 12px;width:100%;}
+.round-label::after{content:'';display:block;width:38px;height:2px;background:linear-gradient(90deg,transparent,#d4a017,transparent);margin:6px auto 0;}
+.bracket-slots{display:flex;flex-direction:column;justify-content:space-around;gap:12px;width:100%;align-items:center;}
+.slot{width:100%;max-width:320px;animation:fadeUp .4s ease both;}
+.bracket-slots .slot:nth-child(2){animation-delay:.06s;}
+.bracket-slots .slot:nth-child(3){animation-delay:.12s;}
+.bracket-slots .slot:nth-child(4){animation-delay:.18s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
-/* Game card */
-.slot{width:178px;margin:0 auto;}
-.game-card{border:1.5px solid #e5c766;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 3px 12px rgba(180,130,0,.14);transition:transform .15s, box-shadow .15s;}
-.game-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,0,.22);}
-.round-tag{background:linear-gradient(135deg,#fdf3cf,#fbeeba);padding:4px 9px;font-size:.56rem;font-weight:800;color:#96700a;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:4px;}
-.round-tag::before{content:'🏆';font-size:.6rem;}
-.meta-line{padding:5px 9px;font-size:.6rem;font-weight:700;color:#8a7a6a;background:#fbf8f2;border-bottom:1px solid #f0e8da;display:flex;flex-wrap:wrap;gap:3px 8px;line-height:1.4;}
+/* vertical connector between rounds (mobile) */
+.m-conn{display:flex;flex-direction:column;align-items:center;padding:12px 0 16px;}
+.m-conn .line{width:2px;height:20px;background:linear-gradient(180deg,#d4a017,#e5c766);}
+.m-conn .arrow{color:#d4a017;font-size:.8rem;line-height:1;margin-top:2px;}
+.d-conn{display:none;}
+
+/* ============ GAME CARD ============ */
+.game-card{border:1.5px solid #e5c766;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 3px 12px rgba(180,130,0,.14);transition:transform .15s, box-shadow .15s;position:relative;}
+.game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#d4a017,#f5d78e,#d4a017);}
+.game-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,0,.24);}
+.round-tag{background:linear-gradient(135deg,#fdf3cf,#fbeeba);padding:5px 10px;font-size:.58rem;font-weight:800;color:#96700a;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:4px;}
+.round-tag::before{content:'🏆';font-size:.62rem;}
+.meta-line{padding:6px 10px;font-size:.62rem;font-weight:700;color:#8a7a6a;background:#fbf8f2;border-bottom:1px solid #f0e8da;display:flex;flex-wrap:wrap;gap:3px 9px;line-height:1.5;}
 .meta-line a{color:#8a6c1c;text-decoration:underline;}
 .meta-line a:hover{color:#7d1a1a;}
-.team-line{display:flex;align-items:center;padding:8px 9px;gap:5px;border-bottom:1px solid #f7f2e8;}
+.team-line{display:flex;align-items:center;padding:9px 10px;gap:5px;border-bottom:1px solid #f7f2e8;}
 .team-line:last-child{border-bottom:none;}
 .team-line.win{background:linear-gradient(90deg,#eefbee,#f7fdf7);}
 .team-line.lose{opacity:.5;}
-.tname{flex:1;font-size:.75rem;font-weight:700;color:#222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tname{flex:1;font-size:.78rem;font-weight:700;color:#222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .tname.tbd{color:#c2b49f;font-style:italic;font-weight:600;}
-.tscore{font-size:.74rem;font-weight:800;min-width:20px;text-align:right;color:#5c1010;}
+.tscore{font-size:.76rem;font-weight:800;min-width:20px;text-align:right;color:#5c1010;}
 .tscore.wscore{color:#1a7d1a;}
 .wbadge{font-size:.54rem;font-weight:800;background:#1a7d1a;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;flex-shrink:0;}
 .tbd-card{border:1.5px dashed #d8cbb6;border-radius:12px;overflow:hidden;background:#fbfaf7;}
@@ -70,23 +88,31 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;min-height:100vh;}
 .tbd-card .round-tag::before{content:'⏳';}
 .tbd-card .meta-line{background:#f9f6f0;}
 
-/* Champion */
-.champ-box{width:178px;margin:0 auto;border:2px solid #d4a017;border-radius:14px;padding:20px 12px;text-align:center;background:linear-gradient(150deg,#fdf6dd,#fffdf4 60%,#fdf3cf);box-shadow:0 6px 24px rgba(180,130,0,.28), inset 0 1px 0 rgba(255,255,255,.8);position:relative;overflow:hidden;}
-.champ-box::before{content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:120px;height:60px;background:radial-gradient(ellipse,rgba(245,215,142,.6),transparent 70%);}
-.champ-box .ci{font-size:2.2rem;margin-bottom:8px;filter:drop-shadow(0 3px 6px rgba(180,130,0,.35));}
-.champ-box .cl{font-size:.58rem;font-weight:800;color:#96700a;text-transform:uppercase;letter-spacing:.2em;margin-bottom:7px;}
-.champ-box .cn{font-size:1rem;font-weight:800;color:#5c1010;}
-.champ-box .ctbd{font-size:.82rem;color:#c2b49f;font-style:italic;}
+/* ============ CHAMPION ============ */
+.champ-box{width:100%;max-width:320px;margin:0 auto;border:2px solid #d4a017;border-radius:16px;padding:24px 14px;text-align:center;background:linear-gradient(150deg,#fdf6dd,#fffdf4 60%,#fdf3cf);box-shadow:0 6px 26px rgba(180,130,0,.3), inset 0 1px 0 rgba(255,255,255,.8);position:relative;overflow:hidden;}
+.champ-box::before{content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:140px;height:70px;background:radial-gradient(ellipse,rgba(245,215,142,.65),transparent 70%);}
+.champ-box::after{content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:sweep 4s ease-in-out infinite;}
+@keyframes sweep{0%,55%{left:-80%;}85%,100%{left:130%;}}
+.champ-box .ci{font-size:2.4rem;margin-bottom:8px;filter:drop-shadow(0 3px 8px rgba(180,130,0,.4));}
+.champ-box .cl{font-size:.6rem;font-weight:800;color:#96700a;text-transform:uppercase;letter-spacing:.22em;margin-bottom:8px;}
+.champ-box .cn{font-size:1.05rem;font-weight:800;color:#5c1010;}
+.champ-box .ctbd{font-size:.84rem;color:#c2b49f;font-style:italic;}
 
-/* Mobile: stack rounds vertically */
-@media(max-width:640px){
-  .bracket-wrap{flex-direction:column;gap:26px;align-items:stretch;}
-  .bracket-wrap svg{display:none;}
-  .bracket-round{min-width:100%;}
-  .round-label{font-size:.74rem;}
-  .slot{width:100%;max-width:320px;}
-  .champ-box{width:100%;max-width:320px;}
-  .bracket-slots{gap:12px !important;}
+@media(prefers-reduced-motion:reduce){
+  .header::after,.header .trophy,.champ-box::after,.slot{animation:none;}
+}
+
+/* ============ DESKTOP ≥760px: horizontal bracket ============ */
+@media(min-width:760px){
+  .bracket-wrap{flex-direction:row;align-items:stretch;padding-top:4px;}
+  .bracket-round{min-width:0;flex:1;}
+  .bracket-slots{flex:1;gap:14px;}
+  .slot{width:178px;max-width:178px;margin:0 auto;}
+  .champ-box{width:178px;}
+  .round-label{font-size:.64rem;}
+  .m-conn{display:none;}
+  .d-conn{display:block;flex-shrink:0;align-self:center;}
+  .tname{font-size:.74rem;}
 }
 </style>
 </head>
@@ -116,7 +142,7 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;min-height:100vh;}
 </div>
 
 <div class="main">
-<div id="dbg" style="text-align:center;font-size:.68rem;color:#c5b8a5;margin-bottom:10px;"></div>
+<div id="dbg" style="text-align:center;font-size:.66rem;color:#c5b8a5;margin-bottom:10px;"></div>
 <div id="out">
   <div class="empty"><div class="icon">🏆</div><h3>Select a Division</h3><p>Choose a division to view the playoff bracket.</p></div>
 </div>
@@ -183,31 +209,25 @@ function sortDT(a,b){
   function to24(t){var p=String(t||'').split(' '),hm=(p[0]||'0:00').split(':'),h=+hm[0],m=+hm[1]||0;if(p[1]==='PM'&&h!==12)h+=12;if(p[1]==='AM'&&h===12)h=0;return h*60+m;}
   return to24(a.time)-to24(b.time);
 }
-function winner(g){if(!g||!g.winner)return null;return g.winner==='t1'?g.t1:g.t2;}
-function isPlaceholder(name){return !name || name.indexOf('/')>=0;}
+function isPlaceholder(name){return !name || String(name).indexOf('/')>=0;}
 
 /*
-  Build a display slot:
-  - sched: the scheduled game from json (gives date/time/venue + possibly winner/scores)
-  - feedW1, feedW2: winners of feeding games (null if not decided)
-  Teams shown: real names from sched if not placeholders; otherwise feeding winners; otherwise TBD.
+  Convert a scheduled game to a display slot.
+  IMPORTANT: teams are ONLY shown if the scheduled game has real names.
+  We never auto-advance a previous round's winner — future matchups stay TBD.
+  Date / time / venue always autopopulate from the scheduled game.
 */
-function buildSlot(sched, feedW1, feedW2){
-  var t1=null, t2=null;
-  if(sched && !isPlaceholder(sched.t1)) t1=sched.t1;
-  else if(feedW1) t1=feedW1;
-  if(sched && !isPlaceholder(sched.t2)) t2=sched.t2;
-  else if(feedW2) t2=feedW2;
+function toSlot(g){
+  if(!g) return null;
+  var t1 = isPlaceholder(g.t1)?null:g.t1;
+  var t2 = isPlaceholder(g.t2)?null:g.t2;
   return {
     t1:t1, t2:t2,
-    date:sched?sched.date:null,
-    time:sched?sched.time:null,
-    v:sched?sched.v:null,
-    winner:(sched && !isPlaceholder(sched.t1) && !isPlaceholder(sched.t2))?(sched.winner||''):'',
-    s1:sched?sched.s1:'', s2:sched?sched.s2:''
+    date:g.date||null, time:g.time||null, v:g.v||null,
+    winner:(t1&&t2)?(g.winner||''):'',
+    s1:(t1&&t2)?(g.s1||''):'', s2:(t1&&t2)?(g.s2||''):''
   };
 }
-
 function slotWinner(slot){
   if(!slot||!slot.winner)return null;
   return slot.winner==='t1'?slot.t1:slot.t2;
@@ -218,91 +238,90 @@ function renderBracket(){
   var out = document.getElementById('out');
   if(!div){out.innerHTML='<div class="empty"><div class="icon">🏆</div><h3>Select a Division</h3><p>Choose a division to view the playoff bracket.</p></div>';return;}
 
+  var isHS = (div==='HS-NY'||div==='HS-NJ');
   var dg = GAMES.filter(function(g){return normDiv(g.div)===normDiv(div);});
   var r1 = dg.filter(function(g){return g.date===R1_DATE;}).sort(sortDT);
   var r2 = dg.filter(function(g){return g.date===R2_DATE;}).sort(sortDT);
-  var sfRaw = dg.filter(function(g){return SF_DATES.indexOf(g.date)>=0;}).sort(sortDT);
-  var fRaw  = dg.filter(function(g){return F_DATES.indexOf(g.date)>=0;}).sort(sortDT);
+  var sf = dg.filter(function(g){return SF_DATES.indexOf(g.date)>=0;}).sort(sortDT);
 
-  if(!r1.length&&!r2.length&&!sfRaw.length&&!fRaw.length){
+  // HS Championship (July 26) is cross-division: HS-NY champ vs HS-NJ champ.
+  // The game may be tagged HS, HS-NY, or HS-NJ in the sheet — match any HS* div.
+  var f;
+  if(isHS){
+    f = GAMES.filter(function(g){return F_DATES.indexOf(g.date)>=0 && normDiv(g.div).indexOf('HS')===0;}).sort(sortDT);
+  } else {
+    f = dg.filter(function(g){return F_DATES.indexOf(g.date)>=0;}).sort(sortDT);
+  }
+
+  if(!r1.length&&!r2.length&&!sf.length&&!f.length){
     var poCount=dg.filter(function(g){return ALL_PO.indexOf(g.date)>=0;}).length;
     out.innerHTML='<div class="empty"><div class="icon">📅</div><h3>No Playoff Games Yet</h3><p>The '+div+' bracket will appear once games are scheduled.<br><br><span style="font-size:.72rem;color:#bbb;">Debug: '+GAMES.length+' total · '+dg.length+' in division · '+poCount+' on playoff dates</span></p></div>';
     return;
   }
 
   var twoStage = r2.length > 0;
+
+  // Build round structure. Slots come straight from scheduled games; missing games render as TBD.
+  var rounds = [];
+  rounds.push({label: twoStage?'First Round':'Quarterfinals', slots: padSlots(r1, 4)});
+  if(twoStage) rounds.push({label:'Round 2', slots: padSlots(r2, 2)});
+  var sfCount = twoStage ? 1 : 2;
+  var sfLabel = isHS ? (sfCount===1?'Division Final':'Semifinals') : 'Semifinals';
+  rounds.push({label: sfLabel, slots: padSlots(sf, sfCount)});
+  rounds.push({
+    label: isHS ? 'HS Championship' : 'Finals',
+    slots: padSlots(f, 1),
+    tbdLabels: isHS ? ['HS-NY Champion','HS-NJ Champion'] : null
+  });
+
+  var champ = slotWinner(rounds[rounds.length-1].slots[0]);
+
   var html = '<div class="div-title"><h2>🏆 '+ (DIV_LABELS[div]||div) +' Division</h2></div>';
+  if(isHS){
+    var other = div==='HS-NY' ? 'HS-NJ' : 'HS-NY';
+    html += '<div class="hs-note">⚔️ The '+div+' champion faces the '+other+' champion in the HS Championship — July 26</div>';
+  }
   html += '<div class="legend"><span><span class="dot g"></span>Winner</span><span><span class="dot gold"></span>Scheduled</span><span><span class="dot t"></span>TBD</span></div>';
   html += '<div class="bracket-wrap">';
 
-  if(twoStage){
-    // R1 (4) → R2 (2) → SF (1) → F (1) → Champion
-    var w1 = r1.map(winner); // winners of R1 games in time order
-    var r2slots = [
-      buildSlot(r2[0]||null, w1[0]||null, w1[1]||null),
-      buildSlot(r2[1]||null, w1[2]||null, w1[3]||null)
-    ];
-    var w2 = r2slots.map(slotWinner);
-    var sfSlot = buildSlot(sfRaw[0]||null, w2[0]||null, w2[1]||null);
-    var sfW = slotWinner(sfSlot);
-    var fSlot = buildSlot(fRaw[0]||null, sfW||null, null);
-    var champ = slotWinner(fSlot);
-
-    html += roundCol('First Round', [r1[0]||null,r1[1]||null,r1[2]||null,r1[3]||null].map(rawToSlot), 4);
-    html += connector(4,2);
-    html += roundCol('Round 2', r2slots, 2);
-    html += connector(2,1);
-    html += roundCol('Semifinals', [sfSlot], 1);
-    html += connector(1,1);
-    html += roundCol('Finals', [fSlot], 1);
-    html += connector(1,1);
-    html += champCol(champ);
-  } else {
-    // QF (4) → SF (2) → F (1) → Champion
-    var qf = [r1[0]||null,r1[1]||null,r1[2]||null,r1[3]||null];
-    var qw = qf.map(winner);
-    var sfSlots = [
-      buildSlot(sfRaw[0]||null, qw[0]||null, qw[1]||null),
-      buildSlot(sfRaw[1]||null, qw[2]||null, qw[3]||null)
-    ];
-    var sw = sfSlots.map(slotWinner);
-    var fSlot2 = buildSlot(fRaw[0]||null, sw[0]||null, sw[1]||null);
-    var champ2 = slotWinner(fSlot2);
-
-    html += roundCol('Quarterfinals', qf.map(rawToSlot), 4);
-    html += connector(4,2);
-    html += roundCol('Semifinals', sfSlots, 2);
-    html += connector(2,1);
-    html += roundCol('Finals', [fSlot2], 1);
-    html += connector(1,1);
-    html += champCol(champ2);
+  for(var i=0;i<rounds.length;i++){
+    if(i>0){
+      html += mConn();
+      html += dConn(rounds[i-1].slots.length, rounds[i].slots.length);
+    }
+    html += roundCol(rounds[i]);
   }
+  html += mConn();
+  html += dConn(1,1);
+  html += champCol(champ, isHS ? 'HS Champion' : 'Champion');
 
   html += '</div>';
   out.innerHTML = html;
 }
 
-function rawToSlot(g){
-  if(!g) return null;
-  return {t1:g.t1,t2:g.t2,date:g.date,time:g.time,v:g.v,winner:g.winner||'',s1:g.s1||'',s2:g.s2||''};
+function padSlots(games, count){
+  var slots=[];
+  var n=Math.max(count, games.length);
+  for(var i=0;i<n;i++) slots.push(toSlot(games[i]||null));
+  return slots;
 }
 
-function roundCol(label, slots, count){
+function roundCol(round){
   var h = '<div class="bracket-round">';
-  h += '<div class="round-label">'+label+'</div>';
-  h += '<div class="bracket-slots" style="gap:14px;">';
-  for(var i=0;i<count;i++){
-    h += '<div class="slot">'+gameCard(slots[i]||null, label)+'</div>';
+  h += '<div class="round-label">'+round.label+'</div>';
+  h += '<div class="bracket-slots">';
+  for(var i=0;i<round.slots.length;i++){
+    h += '<div class="slot">'+gameCard(round.slots[i], round.label, round.tbdLabels)+'</div>';
   }
   h += '</div></div>';
   return h;
 }
 
 function metaHTML(slot){
-  if(!slot||(!slot.date&&!slot.v)) return '';
+  if(!slot||(!slot.date&&!slot.v&&!slot.time)) return '';
   var parts=[];
-  if(slot.date) parts.push(fmtShortDate(slot.date));
-  if(slot.time) parts.push(slot.time);
+  if(slot.date) parts.push('📅 '+fmtShortDate(slot.date));
+  if(slot.time) parts.push('🕐 '+slot.time);
   var vn = slot.v?VENUES[slot.v]:null;
   if(vn) parts.push('<a href="'+vn.url+'" target="_blank">📍 '+vn.name+'</a>');
   else if(slot.v) parts.push('📍 '+slot.v);
@@ -310,15 +329,17 @@ function metaHTML(slot){
   return '<div class="meta-line"><span>'+parts.join('</span><span>')+'</span></div>';
 }
 
-function gameCard(slot, roundLabel){
-  if(!slot || (!slot.t1 && !slot.t2 && !slot.date)){
+function gameCard(slot, roundLabel, tbdLabels){
+  var tbd1 = (tbdLabels&&tbdLabels[0])||'TBD';
+  var tbd2 = (tbdLabels&&tbdLabels[1])||'TBD';
+  if(!slot){
     return '<div class="tbd-card"><div class="round-tag">'+roundLabel+'</div>'+
-      '<div class="team-line"><span class="tname tbd">TBD</span></div>'+
-      '<div class="team-line"><span class="tname tbd">TBD</span></div></div>';
+      '<div class="team-line"><span class="tname tbd">'+tbd1+'</span></div>'+
+      '<div class="team-line"><span class="tname tbd">'+tbd2+'</span></div></div>';
   }
   var w = slotWinner(slot);
   var t1win = w && w===slot.t1, t2win = w && w===slot.t2;
-  var t1 = slot.t1||'TBD', t2 = slot.t2||'TBD';
+  var t1 = slot.t1||tbd1, t2 = slot.t2||tbd2;
   var cardClass = (slot.t1&&slot.t2)?'game-card':'tbd-card';
   return '<div class="'+cardClass+'">'+
     '<div class="round-tag">'+roundLabel+'</div>'+
@@ -336,10 +357,16 @@ function gameCard(slot, roundLabel){
   '</div>';
 }
 
-function connector(fromCount, toCount){
-  var totalH = 4*110 + 3*14;
-  var w=34;
-  var svg='<svg width="'+w+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;align-self:center;">';
+/* Mobile connector: small gold line + arrow between stacked rounds */
+function mConn(){
+  return '<div class="m-conn"><div class="line"></div><div class="arrow">▼</div></div>';
+}
+
+/* Desktop connector: SVG lines between columns (hidden on mobile) */
+function dConn(fromCount, toCount){
+  var totalH = 4*128 + 3*14;
+  var w=30;
+  var svg='<svg class="d-conn" width="'+w+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg">';
   var fromSpacing = totalH/fromCount;
   var toSpacing = totalH/toCount;
   var ratio = fromCount/toCount;
@@ -360,13 +387,13 @@ function connector(fromCount, toCount){
   return svg;
 }
 
-function champCol(champ){
+function champCol(champ, label){
   return '<div class="bracket-round">'+
-    '<div class="round-label">Champion</div>'+
+    '<div class="round-label">'+label+'</div>'+
     '<div class="bracket-slots" style="justify-content:center;">'+
     '<div class="slot"><div class="champ-box">'+
       '<div class="ci">🏆</div>'+
-      '<div class="cl">Champion</div>'+
+      '<div class="cl">'+label+'</div>'+
       (champ ? '<div class="cn">'+champ+'</div>' : '<div class="ctbd">To Be Crowned</div>')+
     '</div></div></div></div>';
 }
