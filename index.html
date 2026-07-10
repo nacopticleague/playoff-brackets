@@ -53,12 +53,6 @@ body{font-family:Arial,sans-serif;background:#fff;min-height:100vh;}
 .champ-box .cl{font-size:.6rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
 .champ-box .cn{font-size:.95rem;font-weight:800;color:#5c1010;}
 .champ-box .ctbd{font-size:.82rem;color:#b8a492;font-style:italic;}
-
-/* Connector column */
-.connector-col{display:flex;flex-direction:column;justify-content:space-around;flex:1;align-items:center;min-width:32px;}
-
-/* Spacer */
-.spacer{flex:1;}
 </style>
 </head>
 <body>
@@ -100,12 +94,10 @@ var DIV_LABELS = {JHS:'Junior High',Girls:'Girls',"HS-NY":"High School NY","HS-N
 function normDate(d){
   if(!d) return '';
   d = String(d).trim();
-  // Already YYYY-MM-DD
   if(/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
-  // MM-DD-YYYY or MM/DD/YYYY
   var m = d.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
   if(m){
-    var mo=m[1].padStart(2,'0'), day=m[2].padStart(2,'0');
+    var mo=('0'+m[1]).slice(-2), day=('0'+m[2]).slice(-2);
     return m[3]+'-'+mo+'-'+day;
   }
   return d;
@@ -127,22 +119,22 @@ function loadGames(){
 
 function sortDT(a,b){if(a.date!==b.date)return a.date<b.date?-1:1;return a.time<b.time?-1:1;}
 function winner(g){if(!g||!g.winner)return null;return g.winner==='t1'?g.t1:g.t2;}
-function loser(g){if(!g||!g.winner)return null;return g.winner==='t1'?g.t2:g.t1;}
 
-/* Build a projected game object from two projected teams */
 function proj(t1,t2){return {t1:t1||null,t2:t2||null,winner:null,s1:null,s2:null,projected:true};}
 
-/* Find actual game in list matching two teams */
 function findGame(games, t1, t2){
+  if(!t1||!t2) return null;
   return games.find(function(g){
     return (g.t1===t1&&g.t2===t2)||(g.t1===t2&&g.t2===t1);
   })||null;
 }
 
-/* Merge projected with actual game if found */
 function resolve(projected, actuals){
   if(!projected) return null;
-  if(!projected.t1||!projected.t2) return projected;
+  if(!projected.t1||!projected.t2){
+    // if only one team known, still see if there's a scheduled game with combined names
+    return projected;
+  }
   var actual = findGame(actuals, projected.t1, projected.t2);
   return actual || projected;
 }
@@ -162,7 +154,6 @@ function renderBracket(){
     return;
   }
 
-  // Separate July 11 and July 12 for divisions with 2-stage QF
   var r11 = qfRaw.filter(function(g){return g.date==='2026-07-11';});
   var r12 = qfRaw.filter(function(g){return g.date==='2026-07-12';});
   var twoStageQF = r12.length > 0;
@@ -171,42 +162,40 @@ function renderBracket(){
   html += '<div class="bracket-wrap">';
 
   if(twoStageQF){
-    // 4 rounds: R1(Jul11) → R2(Jul12) → SF → Final → Champion
-    // R1: 4 games
-    // R2: 2 games (winners of R1 pairs advance)
     var r1Winners = r11.map(winner);
-
-    // Project R2 matchups: pair(0,1)→R2slot0, pair(2,3)→R2slot1
     var projR2 = [
       proj(r1Winners[0], r1Winners[1]),
       proj(r1Winners[2], r1Winners[3])
     ];
     var r2Games = [resolve(projR2[0], r12), resolve(projR2[1], r12)];
+    // If r12 games exist but projections don't match (combined-name placeholders), just use raw r12 games
+    if(r12.length && r2Games[0] && r2Games[0].projected && !r2Games[0].t1) r2Games[0]=r12[0]||r2Games[0];
+    if(r12.length>1 && r2Games[1] && r2Games[1].projected && !r2Games[1].t1) r2Games[1]=r12[1]||r2Games[1];
+    // fallback: if projections have no teams at all, show scheduled r12 games directly
+    if(r2Games[0] && r2Games[0].projected && r12[0]) r2Games[0]=r12[0];
+    if(r2Games[1] && r2Games[1].projected && r12[1]) r2Games[1]=r12[1];
+
     var r2Winners = r2Games.map(winner);
+    var projSF = proj(r2Winners[0], r2Winners[1]);
+    var sfGame = resolve(projSF, sfRaw);
+    if(sfGame && sfGame.projected && sfRaw[0]) sfGame=sfRaw[0];
+    var sfWin = winner(sfGame);
 
-    // Project SF matchups
-    var projSF = [proj(r2Winners[0], r2Winners[1])];
-    var sfGames = [resolve(projSF[0], sfRaw)];
-    var sfWinners = sfGames.map(winner);
+    var projF = proj(sfWin, null);
+    var fGame = fRaw || projF;
+    var champ = winner(fRaw);
 
-    // Project Final
-    var projF = proj(sfWinners[0], sfWinners[1]);
-    var fGame = resolve(projF, fRaw ? [fRaw] : []);
-    var champ = winner(fGame&&!fGame.projected?fGame:null);
-
-    // Round 1 column (4 games)
     html += roundCol('First Round', [r11[0]||null, r11[1]||null, r11[2]||null, r11[3]||null], 4);
-    html += svgConnectors(4, 2);
-    html += roundCol('Round of 4', r2Games, 2);
-    html += svgConnectors(2, 1);
-    html += roundCol('Semifinals', sfGames, 1);
-    html += svgConnectors(1, 1, true);
-    html += roundCol('Finals', [fGame], 1);
-    html += svgConnectors(1, 1, true, true);
+    html += connector(4,2);
+    html += roundCol('Round 2', [r2Games[0]||null, r2Games[1]||null], 2);
+    html += connector(2,1);
+    html += roundCol('Semifinals', [sfGame||null], 1);
+    html += connector(1,1);
+    html += roundCol('Finals', [fGame||null], 1);
+    html += connector(1,1);
     html += champCol(champ);
 
   } else {
-    // 3 rounds: QF(Jul11) → SF → Final → Champion
     var qfGames = [qfRaw[0]||null, qfRaw[1]||null, qfRaw[2]||null, qfRaw[3]||null];
     var qfWinners = qfGames.map(winner);
 
@@ -214,19 +203,21 @@ function renderBracket(){
     var projSF1 = proj(qfWinners[2], qfWinners[3]);
     var sfG0 = resolve(projSF0, sfRaw);
     var sfG1 = resolve(projSF1, sfRaw);
-    var sfGames = [sfG0, sfG1];
+    if(sfG0 && sfG0.projected && !sfG0.t1 && sfRaw[0]) sfG0=sfRaw[0];
+    if(sfG1 && sfG1.projected && !sfG1.t1 && sfRaw[1]) sfG1=sfRaw[1];
     var sfWinners = [winner(sfG0), winner(sfG1)];
 
     var projF = proj(sfWinners[0], sfWinners[1]);
-    var fGame = resolve(projF, fRaw ? [fRaw] : []);
-    var champ = winner(fGame&&!fGame.projected?fGame:null);
+    var fGame = resolve(projF, fRaw?[fRaw]:[]);
+    if(fGame && fGame.projected && !fGame.t1 && fRaw) fGame=fRaw;
+    var champ = winner(fGame && !fGame.projected ? fGame : null);
 
     html += roundCol('Quarterfinals', qfGames, 4);
-    html += svgConnectors(4, 2);
-    html += roundCol('Semifinals', sfGames, 2);
-    html += svgConnectors(2, 1);
+    html += connector(4,2);
+    html += roundCol('Semifinals', [sfG0, sfG1], 2);
+    html += connector(2,1);
     html += roundCol('Finals', [fGame], 1);
-    html += svgConnectors(1, 1, true, true);
+    html += connector(1,1);
     html += champCol(champ);
   }
 
@@ -234,24 +225,12 @@ function renderBracket(){
   out.innerHTML = html;
 }
 
-var SLOT_H = 74;   // card height px
-var SLOT_GAP = 12; // gap between cards
-
-function slotSpacing(count){
-  // How many "units" of spacing between slots in a column
-  return SLOT_H * count + SLOT_GAP * (count - 1);
-}
-
 function roundCol(label, games, count){
   var h = '<div class="bracket-round">';
   h += '<div class="round-label">'+label+'</div>';
-  h += '<div class="bracket-slots" style="justify-content:space-around;gap:'+SLOT_GAP+'px;">';
-  games.forEach(function(g){
-    h += '<div class="slot">'+gameCard(g, label)+'</div>';
-  });
-  // Pad with empty slots if needed
-  for(var i=games.length; i<count; i++){
-    h += '<div class="slot">'+gameCard(null, label)+'</div>';
+  h += '<div class="bracket-slots" style="gap:12px;">';
+  for(var i=0;i<count;i++){
+    h += '<div class="slot">'+gameCard(games[i]||null, label)+'</div>';
   }
   h += '</div></div>';
   return h;
@@ -259,59 +238,50 @@ function roundCol(label, games, count){
 
 function gameCard(g, roundLabel){
   if(!g || (!g.t1 && !g.t2)){
-    return '<div class="game-card tbd-card"><div class="round-tag">'+roundLabel+'</div>'+
+    return '<div class="tbd-card"><div class="round-tag">'+roundLabel+'</div>'+
       '<div class="team-line"><span class="tname tbd">TBD</span></div>'+
       '<div class="team-line"><span class="tname tbd">TBD</span></div></div>';
   }
   var w = winner(g);
   var t1win = w && w===g.t1, t2win = w && w===g.t2;
   var t1 = g.t1||'TBD', t2 = g.t2||'TBD';
-  var t1tbd = !g.t1, t2tbd = !g.t2;
   return '<div class="game-card">'+
     '<div class="round-tag">'+roundLabel+'</div>'+
     '<div class="team-line'+(t1win?' win':w?' lose':'')+'">'+
-      '<span class="tname'+(t1tbd?' tbd':'')+'">'+t1+'</span>'+
+      '<span class="tname'+(!g.t1?' tbd':'')+'">'+t1+'</span>'+
       (g.s1?'<span class="tscore'+(t1win?' wscore':'')+'">'+g.s1+'</span>':'')+
       (t1win?'<span class="wbadge">W</span>':'')+
     '</div>'+
     '<div class="team-line'+(t2win?' win':w?' lose':'')+'">'+
-      '<span class="tname'+(t2tbd?' tbd':'')+'">'+t2+'</span>'+
+      '<span class="tname'+(!g.t2?' tbd':'')+'">'+t2+'</span>'+
       (g.s2?'<span class="tscore'+(t2win?' wscore':'')+'">'+g.s2+'</span>':'')+
       (t2win?'<span class="wbadge">W</span>':'')+
     '</div>'+
   '</div>';
 }
 
-function svgConnectors(fromCount, toCount, narrow, last){
-  var w = last ? 40 : 32;
-  var fromH = slotSpacing(fromCount);
-  var toH = slotSpacing(toCount);
-  var totalH = Math.max(fromH, toH);
-  var fromSpacing = totalH / fromCount;
-  var toSpacing = totalH / toCount;
-
-  var svg = '<svg width="'+w+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;align-self:stretch;">';
-
-  // Group from-lines into pairs going to each to-slot
-  var ratio = fromCount / toCount;
-  for(var t=0; t<toCount; t++){
-    var toY = toSpacing * (t + 0.5);
-    // Draw horizontal line to right (going to next column or champ)
+function connector(fromCount, toCount){
+  var CARD=74, GAP=12;
+  var totalH = CARD*4 + GAP*3 + 30; // approx column height baseline
+  var w=32;
+  var svg='<svg width="'+w+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;align-self:center;">';
+  var fromSpacing = totalH/fromCount;
+  var toSpacing = totalH/toCount;
+  var ratio = fromCount/toCount;
+  for(var t=0;t<toCount;t++){
+    var toY = toSpacing*(t+0.5);
     svg += '<line x1="'+(w/2)+'" y1="'+toY+'" x2="'+w+'" y2="'+toY+'" stroke="#d4a017" stroke-width="2"/>';
-    // Draw vertical line connecting from-lines
-    var f0 = t * ratio;
-    var f1 = f0 + ratio - 1;
-    var fromY0 = fromSpacing * (f0 + 0.5);
-    var fromY1 = fromSpacing * (f1 + 0.5);
-    if(fromCount > toCount){
-      svg += '<line x1="0" y1="'+fromY0+'" x2="'+(w/2)+'" y2="'+fromY0+'" stroke="#d4a017" stroke-width="2"/>';
-      svg += '<line x1="0" y1="'+fromY1+'" x2="'+(w/2)+'" y2="'+fromY1+'" stroke="#d4a017" stroke-width="2"/>';
-      svg += '<line x1="'+(w/2)+'" y1="'+fromY0+'" x2="'+(w/2)+'" y2="'+fromY1+'" stroke="#d4a017" stroke-width="2"/>';
+    if(fromCount>toCount){
+      var f0=t*ratio, f1=f0+ratio-1;
+      var y0=fromSpacing*(f0+0.5), y1=fromSpacing*(f1+0.5);
+      svg += '<line x1="0" y1="'+y0+'" x2="'+(w/2)+'" y2="'+y0+'" stroke="#d4a017" stroke-width="2"/>';
+      svg += '<line x1="0" y1="'+y1+'" x2="'+(w/2)+'" y2="'+y1+'" stroke="#d4a017" stroke-width="2"/>';
+      svg += '<line x1="'+(w/2)+'" y1="'+y0+'" x2="'+(w/2)+'" y2="'+y1+'" stroke="#d4a017" stroke-width="2"/>';
     } else {
       svg += '<line x1="0" y1="'+toY+'" x2="'+(w/2)+'" y2="'+toY+'" stroke="#d4a017" stroke-width="2"/>';
     }
   }
-  svg += '</svg>';
+  svg+='</svg>';
   return svg;
 }
 
