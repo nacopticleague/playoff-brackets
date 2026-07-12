@@ -220,8 +220,14 @@ function renderBracket(){
 
   var seeds=b.seeds;
   var games=ALL_GAMES;
+  var isHS=(div==='HS-NY'||div==='HS-NJ');
 
-  /* ── First Round: match seeded teams to game results ── */
+  /* ── Round labels ── */
+  var r1Label=isHS?'First Round':'First Round';
+  var r2Label=isHS?'Second Round':'Semifinals';
+  var r3Label=isHS?'Semifinals':'Championship';
+
+  /* ── First Round ── */
   var fr=[];
   MATCHUP_ORDER.forEach(function(pair){
     var tA={name:seeds[pair[0]],seed:pair[0]+1};
@@ -233,7 +239,7 @@ function renderBracket(){
     fr.push({teamA:tA,teamB:tB,scoreA:scoreA,scoreB:scoreB,winner:winner});
   });
 
-  /* ── Semifinals: winners of FR advance ── */
+  /* ── Second Round / Semifinals ── */
   var sf=[];
   for(var s=0;s<2;s++){
     var w1=fr[s*2].winner;
@@ -250,23 +256,29 @@ function renderBracket(){
     sf.push({teamA:tA,teamB:tB,scoreA:scoreA,scoreB:scoreB,winner:winner});
   }
 
-  /* ── Finals ── */
+  /* ── Division Final / Semifinals for HS ── */
   var fw1=sf[0].winner;
   var fw2=sf[1].winner;
   var fA=fw1||{name:'TBD',seed:null};
   var fB=fw2||{name:'TBD',seed:null};
-  var fScoreA=null,fScoreB=null,finalWinner=null;
+  var fScoreA=null,fScoreB=null,divWinner=null;
   if(fw1&&fw2){
     var result=findGame(games,div,fA.name,fB.name,ROUND_DATES.final);
     fScoreA=result?result.scoreA:null;
     fScoreB=result?result.scoreB:null;
-    finalWinner=getWinner(fScoreA,fScoreB,fA,fB);
+    divWinner=getWinner(fScoreA,fScoreB,fA,fB);
   }
-  var finalGame={teamA:fA,teamB:fB,scoreA:fScoreA,scoreB:fScoreB,winner:finalWinner};
+  var divFinal={teamA:fA,teamB:fB,scoreA:fScoreA,scoreB:fScoreB,winner:divWinner};
 
   /* ── Build HTML ── */
   var h='<div class="bracket-scale" id="bracket-scale"><div class="bracket-wrapper">';
-  h+='<div class="round-labels"><span>First Round</span><span>Semifinals</span><span>Championship</span><span></span></div>';
+
+  if(isHS){
+    h+='<div class="round-labels"><span>'+r1Label+'</span><span>'+r2Label+'</span><span>'+r3Label+'</span><span></span></div>';
+  }else{
+    h+='<div class="round-labels"><span>'+r1Label+'</span><span>'+r2Label+'</span><span>'+r3Label+'</span><span></span></div>';
+  }
+
   h+='<div class="bracket">';
 
   h+='<div class="round r1">';
@@ -278,14 +290,14 @@ function renderBracket(){
   h+='</div>';
 
   h+='<div class="round finals r3">';
-  h+=matchupHTML(finalGame);
+  h+=matchupHTML(divFinal);
   h+='</div>';
 
-  var champClass=finalWinner?'champion-box has-champ':'champion-box';
+  var champClass=divWinner?'champion-box has-champ':'champion-box';
   h+='<div class="'+champClass+'">';
   h+='<div class="trophy">🏆</div>';
   h+='<div class="champ-label">Champion</div>';
-  h+='<div class="champ-name">'+(finalWinner?finalWinner.name:'')+'</div>';
+  h+='<div class="champ-name">'+(divWinner?divWinner.name:'')+'</div>';
   h+='</div>';
 
   h+='</div></div></div>';
