@@ -99,107 +99,188 @@ body{font-family:Arial,sans-serif;background:#fff;min-height:100vh;overflow-x:hi
 <div class="main"><div id="out"></div></div>
 
 <script>
+/* ── Google Sheet CSV (GAMES tab) ── */
+var SHEET_CSV="https://docs.google.com/spreadsheets/d/1aYDxSEu7Q1r9KzVstlMN45dJRPaBpY2Ca6M_YGqTvoM/gviz/tq?tqx=out:csv&gid=147422759";
+
 /* ── Bracket seedings from final regular season standings ── */
 var BRACKETS={
-  "JHS":{
-    seeds:["Queens","SI1","EB (1)","Makkar","Summit","SI2","West Side","Holmdel"],
-    /* results: [firstRound x4, semis x2, final x1] — null = not played */
-    /* Each result: [score1, score2] where score1=higher seed */
-    results:[null,null,null,null,null,null,null]
-  },
-  "Girls":{
-    seeds:["EB (1)","Queens","SI1","Holmdel","Belleville","Bayonne 1 (SASA)","Makkar","EB (2)"],
-    results:[null,null,null,null,null,null,null]
-  },
-  "HS-NY":{
-    seeds:["Queens","Astoria","Brooklyn (1)","SI1 (1)","Long Island (1)","SI1 (2)","SI2 (2)","SI2 (1)"],
-    results:[null,null,null,null,null,null,null]
-  },
-  "HS-NJ":{
-    seeds:["EB (1)","Makkar","Holmdel","EB (2)","Upstate","Philadelphia","West Side","Bayonne 1 (SASA) (2)"],
-    results:[null,null,null,null,null,null,null]
-  },
-  "College":{
-    seeds:["SI1","EB (1)","Philadelphia","Holmdel","Brooklyn","Bayonne 1 (SASA)","EB (2)","Queens"],
-    results:[null,null,null,null,null,null,null]
-  },
-  "Mens":{
-    seeds:["Long Island","EB","Summit","Queens","Holmdel","SI2","SI1","Bayonne 1 (SASA)"],
-    results:[null,null,null,null,null,null,null]
-  }
+  "JHS":{seeds:["Queens","SI1","EB (1)","Makkar","Summit","SI2","West Side","Holmdel"]},
+  "Girls":{seeds:["EB (1)","Queens","SI1","Holmdel","Belleville","Bayonne 1 (SASA)","Makkar","EB (2)"]},
+  "HS-NY":{seeds:["Queens","Astoria","Brooklyn (1)","SI1 (1)","Long Island (1)","SI1 (2)","SI2 (2)","SI2 (1)"]},
+  "HS-NJ":{seeds:["EB (1)","Makkar","Holmdel","EB (2)","Upstate","Philadelphia","West Side","Bayonne 1 (SASA) (2)"]},
+  "College":{seeds:["SI1","EB (1)","Philadelphia","Holmdel","Brooklyn","Bayonne 1 (SASA)","EB (2)","Queens"]},
+  "Mens":{seeds:["Long Island","EB","Summit","Queens","Holmdel","SI2","SI1","Bayonne 1 (SASA)"]}
 };
 
-/* ── Standard 8-team bracket order: 1v8, 4v5, 3v6, 2v7 ── */
-var MATCHUP_ORDER=[[0,7],[3,4],[2,5],[1,6]]; /* seed indices */
+/* ── 8-team bracket order: 1v8, 4v5, 3v6, 2v7 ── */
+var MATCHUP_ORDER=[[0,7],[3,4],[2,5],[1,6]];
 
-function getWinner(result,teamA,teamB){
-  if(!result)return null;
-  return result[0]>result[1]?teamA:result[1]>result[0]?teamB:null;
+/* ── Playoff round dates ── */
+var ROUND_DATES={
+  "first":["2026-07-11","2026-07-12"],
+  "semi":["2026-07-18","2026-07-19"],
+  "final":["2026-07-26"]
+};
+
+var ALL_GAMES=null;
+
+/* ── Parse date to YYYY-MM-DD for comparison ── */
+function normalizeDate(d){
+  if(!d)return '';
+  d=d.trim().replace(/"/g,'');
+  /* MM-DD-YYYY or MM/DD/YYYY */
+  var parts;
+  if(d.indexOf('/')>=0)parts=d.split('/');
+  else if(d.match(/^\d{2}-\d{2}-\d{4}/))parts=d.split('-');
+  else return d; /* already YYYY-MM-DD */
+  return parts[2]+'-'+parts[0].padStart(2,'0')+'-'+parts[1].padStart(2,'0');
+}
+
+/* ── CSV parser ── */
+function parseCSVRow(row){
+  var cols=[];var cur='';var inQ=false;
+  for(var i=0;i<row.length;i++){
+    var c=row[i];
+    if(c==='"'){inQ=!inQ;}
+    else if(c===','&&!inQ){cols.push(cur);cur='';}
+    else{cur+=c;}
+  }
+  cols.push(cur);
+  return cols;
+}
+
+function parseCSV(csvText){
+  var lines=csvText.trim().split('\n');
+  if(lines.length<2)return [];
+  var headers=lines[0].split(',').map(function(h){return h.trim().replace(/"/g,'').toLowerCase();});
+  var iT1=-1,iT2=-1,iDiv=-1,iDate=-1,iS1=-1,iS2=-1;
+  headers.forEach(function(h,idx){
+    if(h==='team 1')iT1=idx;
+    else if(h==='team 2')iT2=idx;
+    else if(h==='division')iDiv=idx;
+    else if(h==='date')iDate=idx;
+    else if(h==='score 1')iS1=idx;
+    else if(h==='score 2')iS2=idx;
+  });
+  var games=[];
+  for(var r=1;r<lines.length;r++){
+    var cols=parseCSVRow(lines[r]);
+    var t1=cols[iT1]?cols[iT1].trim().replace(/"/g,''):'';
+    var t2=cols[iT2]?cols[iT2].trim().replace(/"/g,''):'';
+    var div=cols[iDiv]?cols[iDiv].trim().replace(/"/g,''):'';
+    var s1=parseInt(cols[iS1],10);
+    var s2=parseInt(cols[iS2],10);
+    if(!t1||!t2||!div||isNaN(s1)||isNaN(s2))continue;
+    var dt=normalizeDate(cols[iDate]||'');
+    games.push({t1:t1,t2:t2,div:div,date:dt,s1:s1,s2:s2});
+  }
+  return games;
+}
+
+/* ── Find a game result between two teams in a set of dates ── */
+function findGame(games,div,teamA,teamB,dates){
+  for(var i=0;i<games.length;i++){
+    var g=games[i];
+    if(g.div!==div)continue;
+    if(dates.indexOf(g.date)===-1)continue;
+    /* Match regardless of which team is t1 or t2 */
+    if((g.t1===teamA&&g.t2===teamB)||(g.t1===teamB&&g.t2===teamA)){
+      /* Return scores in order: teamA's score first */
+      if(g.t1===teamA)return {scoreA:g.s1,scoreB:g.s2};
+      else return {scoreA:g.s2,scoreB:g.s1};
+    }
+  }
+  return null;
+}
+
+function getWinner(scoreA,scoreB,teamA,teamB){
+  if(scoreA==null||scoreB==null)return null;
+  return scoreA>scoreB?teamA:scoreB>scoreA?teamB:null;
+}
+
+/* ── Fetch and render ── */
+function loadBrackets(){
+  document.getElementById('out').innerHTML='<div style="text-align:center;padding:40px;color:#888;">Loading brackets…</div>';
+  fetch(SHEET_CSV)
+    .then(function(r){return r.text();})
+    .then(function(csv){
+      ALL_GAMES=parseCSV(csv);
+      renderBracket();
+    })
+    .catch(function(err){
+      document.getElementById('out').innerHTML='<div style="text-align:center;padding:40px;color:#a22;">Error loading data. Please try again.</div>';
+      console.error(err);
+    });
 }
 
 function renderBracket(){
   var div=document.getElementById('fdiv').value;
   var b=BRACKETS[div];
-  if(!b){document.getElementById('out').innerHTML='';return;}
+  if(!b||!ALL_GAMES){return;}
 
   var seeds=b.seeds;
-  var res=b.results;
+  var games=ALL_GAMES;
 
-  /* First round matchups */
+  /* ── First Round: match seeded teams to game results ── */
   var fr=[];
-  MATCHUP_ORDER.forEach(function(pair,i){
+  MATCHUP_ORDER.forEach(function(pair){
     var tA={name:seeds[pair[0]],seed:pair[0]+1};
     var tB={name:seeds[pair[1]],seed:pair[1]+1};
-    var r=res[i];
-    var winner=r?getWinner(r,tA,tB):null;
-    fr.push({teamA:tA,teamB:tB,scoreA:r?r[0]:null,scoreB:r?r[1]:null,winner:winner});
+    var result=findGame(games,div,tA.name,tB.name,ROUND_DATES.first);
+    var scoreA=result?result.scoreA:null;
+    var scoreB=result?result.scoreB:null;
+    var winner=getWinner(scoreA,scoreB,tA,tB);
+    fr.push({teamA:tA,teamB:tB,scoreA:scoreA,scoreB:scoreB,winner:winner});
   });
 
-  /* Semis */
+  /* ── Semifinals: winners of FR advance ── */
   var sf=[];
   for(var s=0;s<2;s++){
     var w1=fr[s*2].winner;
     var w2=fr[s*2+1].winner;
     var tA=w1||{name:'TBD',seed:null};
     var tB=w2||{name:'TBD',seed:null};
-    var r=res[4+s];
-    var winner=r&&w1&&w2?getWinner(r,tA,tB):null;
-    sf.push({teamA:tA,teamB:tB,scoreA:r?r[0]:null,scoreB:r?r[1]:null,winner:winner});
+    var scoreA=null,scoreB=null,winner=null;
+    if(w1&&w2){
+      var result=findGame(games,div,tA.name,tB.name,ROUND_DATES.semi);
+      scoreA=result?result.scoreA:null;
+      scoreB=result?result.scoreB:null;
+      winner=getWinner(scoreA,scoreB,tA,tB);
+    }
+    sf.push({teamA:tA,teamB:tB,scoreA:scoreA,scoreB:scoreB,winner:winner});
   }
 
-  /* Final */
+  /* ── Finals ── */
   var fw1=sf[0].winner;
   var fw2=sf[1].winner;
   var fA=fw1||{name:'TBD',seed:null};
   var fB=fw2||{name:'TBD',seed:null};
-  var fRes=res[6];
-  var finalWinner=fRes&&fw1&&fw2?getWinner(fRes,fA,fB):null;
-  var finalGame={teamA:fA,teamB:fB,scoreA:fRes?fRes[0]:null,scoreB:fRes?fRes[1]:null,winner:finalWinner};
+  var fScoreA=null,fScoreB=null,finalWinner=null;
+  if(fw1&&fw2){
+    var result=findGame(games,div,fA.name,fB.name,ROUND_DATES.final);
+    fScoreA=result?result.scoreA:null;
+    fScoreB=result?result.scoreB:null;
+    finalWinner=getWinner(fScoreA,fScoreB,fA,fB);
+  }
+  var finalGame={teamA:fA,teamB:fB,scoreA:fScoreA,scoreB:fScoreB,winner:finalWinner};
 
-  /* Build HTML */
+  /* ── Build HTML ── */
   var h='<div class="bracket-scale" id="bracket-scale"><div class="bracket-wrapper">';
-
-  /* Round labels */
   h+='<div class="round-labels"><span>First Round</span><span>Semifinals</span><span>Championship</span><span></span></div>';
-
   h+='<div class="bracket">';
 
-  /* Round 1 */
   h+='<div class="round r1">';
   fr.forEach(function(m){h+=matchupHTML(m);});
   h+='</div>';
 
-  /* Semis */
   h+='<div class="round r2">';
   sf.forEach(function(m){h+=matchupHTML(m);});
   h+='</div>';
 
-  /* Final */
   h+='<div class="round finals r3">';
   h+=matchupHTML(finalGame);
   h+='</div>';
 
-  /* Champion */
   var champClass=finalWinner?'champion-box has-champ':'champion-box';
   h+='<div class="'+champClass+'">';
   h+='<div class="trophy">🏆</div>';
@@ -208,7 +289,6 @@ function renderBracket(){
   h+='</div>';
 
   h+='</div></div></div>';
-
   document.getElementById('out').innerHTML=h;
   scaleBracket();
 }
@@ -218,8 +298,6 @@ function matchupHTML(m){
   var cls='matchup'+(decided?' decided':'');
   var aWin=m.winner&&m.winner.name===m.teamA.name;
   var bWin=m.winner&&m.winner.name===m.teamB.name;
-  var tbd=!m.teamA.seed;
-
   var h='<div class="'+cls+'">';
   h+=teamHTML(m.teamA,m.scoreA,aWin,!m.teamA.seed);
   h+=teamHTML(m.teamB,m.scoreB,bWin,!m.teamB.seed);
@@ -234,7 +312,7 @@ function teamHTML(team,score,isWinner,isTBD){
   return '<div class="'+cls+'">'+seedHtml+'<span class="name">'+team.name+'</span>'+scoreHtml+'</div>';
 }
 
-renderBracket();
+loadBrackets();
 
 /* ── Scale bracket to fit container without horizontal scroll ── */
 function scaleBracket(){
@@ -246,7 +324,6 @@ function scaleBracket(){
   var scale=Math.min(1,containerW/bracketW);
   el.style.transform='scale('+scale+')';
   el.style.transformOrigin='top left';
-  /* Adjust container height to match scaled content */
   el.parentElement.style.height=(el.scrollHeight*scale)+'px';
 }
 window.addEventListener('resize',function(){scaleBracket();});
