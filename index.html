@@ -25,7 +25,7 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;min-height:100vh;}
 .fg select:focus{outline:none;border-color:#d4a017;box-shadow:0 0 0 3px rgba(212,160,23,.2);}
 
 /* Main */
-.main{max-width:1000px;margin:0 auto;padding:24px 14px 48px;overflow-x:auto;}
+.main{max-width:1000px;margin:0 auto;padding:24px 14px 48px;overflow-x:hidden;}
 .div-title{text-align:center;margin-bottom:6px;}
 .div-title h2{display:inline-flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:800;color:#5c1010;text-transform:uppercase;letter-spacing:.08em;padding:8px 22px;border:1.5px solid #e8d9a0;border-radius:24px;background:linear-gradient(135deg,#fdf8e4,#fffdf5);box-shadow:0 2px 10px rgba(180,130,0,.1);}
 .legend{display:flex;gap:18px;justify-content:center;margin:14px 0 22px;flex-wrap:wrap;}
@@ -41,7 +41,8 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;min-height:100vh;}
 .empty p{font-size:.85rem;color:#777;line-height:1.7;}
 
 /* Bracket layout */
-.bracket-wrap{display:flex;align-items:stretch;min-width:fit-content;padding-top:4px;}
+.bracket-scale-outer{width:100%;overflow:hidden;position:relative;}
+.bracket-wrap{display:flex;align-items:stretch;min-width:fit-content;padding-top:4px;transform-origin:top left;}
 .bracket-round{display:flex;flex-direction:column;align-items:center;min-width:190px;}
 .round-label{font-size:.64rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.14em;text-align:center;padding:0 0 12px;width:100%;position:relative;}
 .round-label::after{content:'';display:block;width:34px;height:2px;background:linear-gradient(90deg,transparent,#d4a017,transparent);margin:6px auto 0;}
@@ -391,7 +392,7 @@ function renderBracket(){
   var res = buildDivisionBracket(div);
   var html = '<div class="div-title"><h2>🏆 '+ (DIV_LABELS[div]||div) +' Division</h2></div>';
   html += '<div class="legend"><span><span class="dot g"></span>Winner</span><span><span class="dot gold"></span>Scheduled</span><span><span class="dot t"></span>TBD</span></div>';
-  html += '<div class="bracket-wrap">';
+  html += '<div class="bracket-scale-outer" id="bracketScaleOuter"><div class="bracket-wrap">';
 
   if(res.kind==='two'){
     // First Round (4, seeded 1v8/4v5/2v7/3v6) → Round 2 (2) → Semifinals
@@ -426,8 +427,9 @@ function renderBracket(){
     html += champCol(res.champ, div);
   }
 
-  html += '</div>';
+  html += '</div></div>';
   out.innerHTML = html;
+  fitBracket();
 }
 
 function rawToSlot(g){
@@ -535,6 +537,29 @@ function champCol(champ, div){
       (champ ? '<div class="cn">'+(seedTxt?'<span class="sbadge">#'+seedTxt+'</span> ':'')+champ+'</div>' : '<div class="ctbd">To Be Crowned</div>')+
     '</div></div></div></div>';
 }
+
+/* Scales the whole bracket down (never up) so it always fits the
+   available width — no horizontal scrolling, on mobile or embedded in
+   CHMeetings/Google Sites. On narrow phones the CSS media query already
+   stacks rounds vertically, so this ends up as a no-op there (scale≈1);
+   on wider layouts it shrinks the classic left-to-right bracket to fit. */
+function fitBracket(){
+  var outer = document.getElementById('bracketScaleOuter');
+  if(!outer) return;
+  var inner = outer.querySelector('.bracket-wrap');
+  if(!inner) return;
+  inner.style.transform = 'none';
+  outer.style.height = 'auto';
+  var availW = outer.clientWidth;
+  var naturalW = inner.scrollWidth;
+  var naturalH = inner.scrollHeight;
+  var scale = (naturalW > availW && availW > 0) ? (availW / naturalW) : 1;
+  inner.style.transform = 'scale(' + scale + ')';
+  outer.style.height = Math.ceil(naturalH * scale) + 'px';
+}
+window.addEventListener('resize', function(){
+  if(document.getElementById('fdiv').value) fitBracket();
+});
 
 loadGames();
 </script>
