@@ -65,6 +65,7 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;min-height:100vh;}
 .tscore{font-size:.74rem;font-weight:800;min-width:20px;text-align:right;color:#5c1010;}
 .tscore.wscore{color:#1a7d1a;}
 .wbadge{font-size:.54rem;font-weight:800;background:#1a7d1a;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;flex-shrink:0;}
+.sbadge{font-size:.56rem;font-weight:800;color:#96700a;background:#fdf3cf;border:1px solid #e5c766;padding:1px 5px;border-radius:8px;flex-shrink:0;}
 .tbd-card{border:1.5px dashed #d8cbb6;border-radius:12px;overflow:hidden;background:#fbfaf7;}
 .tbd-card .round-tag{background:#f4efe6;color:#b3a48d;}
 .tbd-card .round-tag::before{content:'⏳';}
@@ -405,24 +406,24 @@ function renderBracket(){
     var fSlot = buildSlot(res.fRaw[0]||null, res.divisionChamp||null, otherChamp||null);
     var champ = slotWinner(fSlot);
 
-    html += roundCol('First Round', res.r1.map(rawToSlot), 4);
+    html += roundCol('First Round', res.r1.map(rawToSlot), 4, div);
     html += connector(4,2);
-    html += roundCol('Round 2', res.r2, 2);
+    html += roundCol('Round 2', res.r2, 2, div);
     html += connector(2,1);
-    html += roundCol('Semifinals', [res.sf], 1);
+    html += roundCol('Semifinals', [res.sf], 1, div);
     html += connector(1,1);
-    html += roundCol('Finals', [fSlot], 1);
+    html += roundCol('Finals', [fSlot], 1, div);
     html += connector(1,1);
-    html += champCol(champ);
+    html += champCol(champ, div);
   } else {
     // Quarterfinals (4, seeded 1v8/4v5/2v7/3v6) → Semifinals (2) → Finals (1) → Champion
-    html += roundCol('Quarterfinals', res.r1.map(rawToSlot), 4);
+    html += roundCol('Quarterfinals', res.r1.map(rawToSlot), 4, div);
     html += connector(4,2);
-    html += roundCol('Semifinals', res.sf, 2);
+    html += roundCol('Semifinals', res.sf, 2, div);
     html += connector(2,1);
-    html += roundCol('Finals', [res.f], 1);
+    html += roundCol('Finals', [res.f], 1, div);
     html += connector(1,1);
-    html += champCol(res.champ);
+    html += champCol(res.champ, div);
   }
 
   html += '</div>';
@@ -434,12 +435,20 @@ function rawToSlot(g){
   return {t1:g.t1,t2:g.t2,date:g.date,time:g.time,v:g.v,winner:g.winner||'',s1:g.s1||'',s2:g.s2||''};
 }
 
-function roundCol(label, slots, count){
+function seedAny(div, name){
+  var s = seedOf(div, name);
+  if(s!=null) return s;
+  var other = CROSS_DIV[normDiv(div)];
+  if(other) return seedOf(other, name);
+  return null;
+}
+
+function roundCol(label, slots, count, div){
   var h = '<div class="bracket-round">';
   h += '<div class="round-label">'+label+'</div>';
   h += '<div class="bracket-slots" style="gap:14px;">';
   for(var i=0;i<count;i++){
-    h += '<div class="slot">'+gameCard(slots[i]||null, label)+'</div>';
+    h += '<div class="slot">'+gameCard(slots[i]||null, label, div)+'</div>';
   }
   h += '</div></div>';
   return h;
@@ -457,7 +466,13 @@ function metaHTML(slot){
   return '<div class="meta-line"><span>'+parts.join('</span><span>')+'</span></div>';
 }
 
-function gameCard(slot, roundLabel){
+function seedBadge(div, name){
+  if(!name) return '';
+  var s = seedAny(div, name);
+  return s ? '<span class="sbadge">#'+s+'</span>' : '';
+}
+
+function gameCard(slot, roundLabel, div){
   if(!slot || (!slot.t1 && !slot.t2 && !slot.date)){
     return '<div class="tbd-card"><div class="round-tag">'+roundLabel+'</div>'+
       '<div class="team-line"><span class="tname tbd">TBD</span></div>'+
@@ -471,11 +486,13 @@ function gameCard(slot, roundLabel){
     '<div class="round-tag">'+roundLabel+'</div>'+
     metaHTML(slot)+
     '<div class="team-line'+(t1win?' win':w?' lose':'')+'">'+
+      seedBadge(div,slot.t1)+
       '<span class="tname'+(!slot.t1?' tbd':'')+'">'+t1+'</span>'+
       (slot.s1?'<span class="tscore'+(t1win?' wscore':'')+'">'+slot.s1+'</span>':'')+
       (t1win?'<span class="wbadge">W</span>':'')+
     '</div>'+
     '<div class="team-line'+(t2win?' win':w?' lose':'')+'">'+
+      seedBadge(div,slot.t2)+
       '<span class="tname'+(!slot.t2?' tbd':'')+'">'+t2+'</span>'+
       (slot.s2?'<span class="tscore'+(t2win?' wscore':'')+'">'+slot.s2+'</span>':'')+
       (t2win?'<span class="wbadge">W</span>':'')+
@@ -507,14 +524,15 @@ function connector(fromCount, toCount){
   return svg;
 }
 
-function champCol(champ){
+function champCol(champ, div){
+  var seedTxt = champ ? seedAny(div, champ) : null;
   return '<div class="bracket-round">'+
     '<div class="round-label">Champion</div>'+
     '<div class="bracket-slots" style="justify-content:center;">'+
     '<div class="slot"><div class="champ-box">'+
       '<div class="ci">🏆</div>'+
       '<div class="cl">Champion</div>'+
-      (champ ? '<div class="cn">'+champ+'</div>' : '<div class="ctbd">To Be Crowned</div>')+
+      (champ ? '<div class="cn">'+(seedTxt?'<span class="sbadge">#'+seedTxt+'</span> ':'')+champ+'</div>' : '<div class="ctbd">To Be Crowned</div>')+
     '</div></div></div></div>';
 }
 
