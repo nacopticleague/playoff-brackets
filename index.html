@@ -104,12 +104,30 @@ var SHEET_CSV="https://docs.google.com/spreadsheets/d/1aYDxSEu7Q1r9KzVstlMN45dJR
 
 /* ── Bracket seedings from final regular season standings ── */
 var BRACKETS={
-  "JHS":{seeds:["Queens","EB (1)","Holmdel","Makkar","Summit","SI2","West Side","SI1"]},
-  "Girls":{seeds:["EB (1)","Queens","SI1","Holmdel","Belleville","Bayonne 1 (SASA)","Makkar","EB (2)"]},
-  "HS-NY":{seeds:["Queens","Astoria","Brooklyn (1)","SI1 (1)","Long Island (1)","SI1 (2)","SI2 (2)","SI2 (1)"]},
-  "HS-NJ":{seeds:["EB (1)","Makkar","Holmdel","EB (2)","Upstate","Philadelphia","West Side","Bayonne 1 (SASA) (2)"]},
-  "College":{seeds:["SI1","EB (1)","Philadelphia","Holmdel","Brooklyn","Bayonne 1 (SASA)","EB (2)","Queens"]},
-  "Mens":{seeds:["Long Island","EB","Summit","Queens","Holmdel","SI2","SI1","Bayonne 1 (SASA)"]}
+  "JHS":{
+    seeds:["Queens","EB (1)","Holmdel","Makkar","Summit","SI2","West Side","SI1"],
+    firstRound:[[1,0],[1,0],[0,1],[1,0]] /* Q>SI1, Mak>Sum, SI2>Hol, EB1>WS */
+  },
+  "Girls":{
+    seeds:["EB (1)","Queens","SI1","Holmdel","Belleville","Bayonne 1 (SASA)","Makkar","EB (2)"],
+    firstRound:[[1,0],[1,0],[1,0],[1,0]] /* EB1>EB2, Hol>Bel, SI1>Bay, Q>Mak */
+  },
+  "HS-NY":{
+    seeds:["Queens","Astoria","Brooklyn (1)","SI1 (1)","Long Island (1)","SI1 (2)","SI2 (2)","SI2 (1)"],
+    firstRound:[[1,0],[1,0],[1,0],[1,0]] /* Q>SI2(1), SI1(1)>LI, BK1>SI1(2), Ast>SI2(2) */
+  },
+  "HS-NJ":{
+    seeds:["EB (1)","Makkar","Holmdel","EB (2)","Upstate","Philadelphia","West Side","Bayonne 1 (SASA) (2)"],
+    firstRound:[[1,0],[1,0],[0,1],[1,0]] /* EB1>Bay(2), EB2>Ups, Phil>Hol, Mak>WS */
+  },
+  "College":{
+    seeds:["SI1","EB (1)","Philadelphia","Holmdel","Brooklyn","Bayonne 1 (SASA)","EB (2)","Queens"],
+    firstRound:[[1,0],[0,1],[1,0],[1,0]] /* SI1>Q, BK>Hol, Phil>Bay, EB1>EB2 */
+  },
+  "Mens":{
+    seeds:["Long Island","EB","Summit","Queens","Holmdel","SI2","SI1","Bayonne 1 (SASA)"],
+    firstRound:[[1,0],[1,0],[1,0],[1,0]] /* LI>Bay, Q>Hol, Sum>SI2, EB>SI1 */
+  }
 };
 
 /* ── 8-team bracket order: 1v8, 4v5, 3v6, 2v7 ── */
@@ -128,12 +146,20 @@ var ALL_GAMES=null;
 function normalizeDate(d){
   if(!d)return '';
   d=d.trim().replace(/"/g,'');
-  /* MM-DD-YYYY or MM/DD/YYYY */
-  var parts;
-  if(d.indexOf('/')>=0)parts=d.split('/');
-  else if(d.match(/^\d{2}-\d{2}-\d{4}/))parts=d.split('-');
-  else return d; /* already YYYY-MM-DD */
-  return parts[2]+'-'+parts[0].padStart(2,'0')+'-'+parts[1].padStart(2,'0');
+  /* Handle Google Sheets Date(YYYY,M,D) format */
+  var dm=d.match(/Date\((\d{4}),(\d+),(\d+)\)/);
+  if(dm)return dm[1]+'-'+String(+dm[2]+1).padStart(2,'0')+'-'+dm[3].padStart(2,'0');
+  /* Handle MM/DD/YYYY */
+  if(d.indexOf('/')>=0){
+    var parts=d.split('/');
+    if(parts.length===3)return parts[2]+'-'+parts[0].padStart(2,'0')+'-'+parts[1].padStart(2,'0');
+  }
+  /* Handle MM-DD-YYYY (not YYYY-MM-DD) */
+  if(d.match(/^\d{1,2}-\d{1,2}-\d{4}$/)){
+    var parts=d.split('-');
+    return parts[2]+'-'+parts[0].padStart(2,'0')+'-'+parts[1].padStart(2,'0');
+  }
+  return d;
 }
 
 /* ── CSV parser ── */
@@ -205,6 +231,12 @@ function loadBrackets(){
     .then(function(r){return r.text();})
     .then(function(csv){
       ALL_GAMES=parseCSV(csv);
+      /* Debug: log playoff games to console */
+      var playoff=ALL_GAMES.filter(function(g){return g.date>='2026-07-11';});
+      console.log('Total games loaded:',ALL_GAMES.length);
+      console.log('Playoff games found:',playoff.length);
+      if(playoff.length)console.log('Sample playoff game:',JSON.stringify(playoff[0]));
+      if(ALL_GAMES.length)console.log('Sample date format:',ALL_GAMES[0].date);
       renderBracket();
     })
     .catch(function(err){
@@ -227,15 +259,18 @@ function renderBracket(){
   var r2Label=isHS?'Second Round':'Semifinals';
   var r3Label=isHS?'Semifinals':'Championship';
 
-  /* ── First Round ── */
+  /* ── First Round: use hardcoded results ── */
   var fr=[];
-  MATCHUP_ORDER.forEach(function(pair){
+  MATCHUP_ORDER.forEach(function(pair,i){
     var tA={name:seeds[pair[0]],seed:pair[0]+1};
     var tB={name:seeds[pair[1]],seed:pair[1]+1};
-    var result=findGame(games,div,tA.name,tB.name,ROUND_DATES.first);
-    var scoreA=result?result.scoreA:null;
-    var scoreB=result?result.scoreB:null;
-    var winner=getWinner(scoreA,scoreB,tA,tB);
+    var r=b.firstRound?b.firstRound[i]:null;
+    var scoreA=r?r[0]:null;
+    var scoreB=r?r[1]:null;
+    var winner=null;
+    if(scoreA!=null&&scoreB!=null){
+      winner=scoreA>scoreB?tA:scoreB>scoreA?tB:null;
+    }
     fr.push({teamA:tA,teamB:tB,scoreA:scoreA,scoreB:scoreB,winner:winner});
   });
 
