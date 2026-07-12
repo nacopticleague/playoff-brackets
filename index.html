@@ -6,84 +6,96 @@
 <title>2026 NA Coptic League – Playoffs</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html{overflow-x:hidden;}
-body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
+body{font-family:Arial,sans-serif;background:#fdfcfa;min-height:100vh;}
 
-/* ============ HEADER (minimal) ============ */
-.header{background:linear-gradient(160deg,#4a0d0d 0%,#5c1010 35%,#7d1a1a 70%,#8f2222 100%);padding:14px 16px 12px;text-align:center;position:relative;overflow:hidden;}
-.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4a017 25%,#f5d78e 50%,#d4a017 75%,transparent);}
-.header h1{font-size:1.15rem;color:#f5d78e;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.35);position:relative;}
+/* Header */
+.header{background:linear-gradient(160deg,#5c1010 0%,#7d1a1a 55%,#8f2222 100%);padding:28px 20px 24px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,23,.18),transparent 70%);}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#d4a017 30%,#f5d78e 50%,#d4a017 70%,transparent);}
+.header .trophy{font-size:1.8rem;margin-bottom:6px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));}
+.header h1{font-size:1.5rem;color:#f5d78e;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.3);}
+.header .sub{font-size:.68rem;color:#d9a3a3;margin-top:5px;letter-spacing:.18em;font-weight:700;text-transform:uppercase;}
 
-/* ============ FILTERS ============ */
-.filters{background:#d8c8ba;border-bottom:2px solid #b8a492;padding:14px 16px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(92,16,16,.08);}
+/* Filters */
+.filters{background:#d8c8ba;border-bottom:2px solid #b8a492;padding:14px 16px;}
 .filter-row{display:flex;gap:12px;flex-wrap:wrap;max-width:1000px;margin:0 auto;}
 .fg{flex:1;min-width:160px;}
-.fg label{display:block;font-size:.66rem;font-weight:800;color:#5c1010;text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px;}
-.fg select{width:100%;padding:11px 12px;border:2px solid #b8a492;border-radius:10px;font-size:.92rem;font-weight:700;color:#5c1010;background:#fff;cursor:pointer;transition:border-color .2s, box-shadow .2s;}
-.fg select:focus{outline:none;border-color:#d4a017;box-shadow:0 0 0 3px rgba(212,160,23,.25);}
+.fg label{display:block;font-size:.68rem;font-weight:700;color:#5c1010;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
+.fg select{width:100%;padding:10px 12px;border:2px solid #b8a492;border-radius:8px;font-size:.9rem;font-weight:700;color:#5c1010;background:#fff;cursor:pointer;transition:border-color .2s, box-shadow .2s;}
+.fg select:focus{outline:none;border-color:#d4a017;box-shadow:0 0 0 3px rgba(212,160,23,.2);}
 
-/* ============ MAIN ============ */
-.main{max-width:1000px;margin:0 auto;padding:12px 6px 40px;}
-.hs-note{max-width:420px;margin:0 auto 12px;text-align:center;font-size:.7rem;font-weight:700;color:#96700a;background:linear-gradient(135deg,#fdf6dd,#fffdf4);border:1px dashed #e5c766;border-radius:10px;padding:7px 12px;line-height:1.45;}
+/* Main */
+.main{max-width:1000px;margin:0 auto;padding:24px 14px 48px;overflow-x:auto;}
+.div-title{text-align:center;margin-bottom:6px;}
+.div-title h2{display:inline-flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:800;color:#5c1010;text-transform:uppercase;letter-spacing:.08em;padding:8px 22px;border:1.5px solid #e8d9a0;border-radius:24px;background:linear-gradient(135deg,#fdf8e4,#fffdf5);box-shadow:0 2px 10px rgba(180,130,0,.1);}
+.legend{display:flex;gap:18px;justify-content:center;margin:14px 0 22px;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;font-weight:700;color:#8a7a6a;text-transform:uppercase;letter-spacing:.05em;}
+.dot{width:9px;height:9px;border-radius:50%;}
+.dot.g{background:#1a7d1a;}
+.dot.gold{background:#d4a017;}
+.dot.t{background:#cbbba8;}
 
 .empty{text-align:center;padding:52px 20px;}
 .empty .icon{font-size:2.8rem;margin-bottom:14px;}
 .empty h3{color:#5c1010;font-size:1.05rem;margin-bottom:8px;font-weight:800;}
 .empty p{font-size:.85rem;color:#777;line-height:1.7;}
 
-/* ============ CLASSIC LEFT→RIGHT BRACKET (all screen sizes) ============
-   The bracket renders at its natural width, then JS scales it down
-   (transform:scale) to fit the viewport — so phones see the exact same
-   classic bracket with NO horizontal scrolling. */
-.bracket-outer{width:100%;overflow:hidden;}
-.bracket-wrap{display:flex;flex-direction:row;align-items:stretch;width:max-content;transform-origin:top left;padding-top:2px;}
-.bracket-round{display:flex;flex-direction:column;align-items:center;width:180px;flex-shrink:0;}
-.round-label{font-size:.8rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.08em;text-align:center;padding:0 0 8px;width:100%;}
-.round-label::after{content:'';display:block;width:36px;height:2px;background:linear-gradient(90deg,transparent,#d4a017,transparent);margin:4px auto 0;}
-.bracket-slots{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:12px;width:100%;}
-.slot{width:176px;margin:0 auto;animation:fadeUp .4s ease both;}
-.bracket-slots .slot:nth-child(2){animation-delay:.06s;}
-.bracket-slots .slot:nth-child(3){animation-delay:.12s;}
-.bracket-slots .slot:nth-child(4){animation-delay:.18s;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.d-conn{display:block;flex-shrink:0;align-self:center;}
+/* Bracket layout */
+.bracket-wrap{display:flex;align-items:stretch;min-width:fit-content;padding-top:4px;}
+.bracket-round{display:flex;flex-direction:column;align-items:center;min-width:190px;}
+.round-label{font-size:.64rem;font-weight:800;color:#b8860b;text-transform:uppercase;letter-spacing:.14em;text-align:center;padding:0 0 12px;width:100%;position:relative;}
+.round-label::after{content:'';display:block;width:34px;height:2px;background:linear-gradient(90deg,transparent,#d4a017,transparent);margin:6px auto 0;}
+.bracket-slots{display:flex;flex-direction:column;justify-content:space-around;flex:1;width:100%;}
 
-/* ============ GAME CARD (big fonts, no per-card header) ============ */
-.game-card{border:1.5px solid #e5c766;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 3px 12px rgba(180,130,0,.14);position:relative;}
-.game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#d4a017,#f5d78e,#d4a017);}
-.meta-line{padding:6px 8px 5px;font-size:.82rem;font-weight:700;color:#7a6a58;background:#fbf8f2;border-bottom:1px solid #f0e8da;display:flex;flex-wrap:wrap;gap:2px 8px;line-height:1.4;}
+/* Game card */
+.slot{width:178px;margin:0 auto;}
+.game-card{border:1.5px solid #e5c766;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 3px 12px rgba(180,130,0,.14);transition:transform .15s, box-shadow .15s;}
+.game-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,0,.22);}
+.round-tag{background:linear-gradient(135deg,#fdf3cf,#fbeeba);padding:4px 9px;font-size:.56rem;font-weight:800;color:#96700a;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:4px;}
+.round-tag::before{content:'🏆';font-size:.6rem;}
+.meta-line{padding:5px 9px;font-size:.6rem;font-weight:700;color:#8a7a6a;background:#fbf8f2;border-bottom:1px solid #f0e8da;display:flex;flex-wrap:wrap;gap:3px 8px;line-height:1.4;}
 .meta-line a{color:#8a6c1c;text-decoration:underline;}
-.team-line{display:flex;align-items:center;padding:9px 8px;gap:5px;border-bottom:1px solid #f7f2e8;}
+.meta-line a:hover{color:#7d1a1a;}
+.team-line{display:flex;align-items:center;padding:8px 9px;gap:5px;border-bottom:1px solid #f7f2e8;}
 .team-line:last-child{border-bottom:none;}
 .team-line.win{background:linear-gradient(90deg,#eefbee,#f7fdf7);}
 .team-line.lose{opacity:.5;}
-.tname{flex:1;font-size:1.02rem;font-weight:700;color:#222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+.tname{flex:1;font-size:.75rem;font-weight:700;color:#222;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .tname.tbd{color:#c2b49f;font-style:italic;font-weight:600;}
-.tname.pend{color:#a98416;font-style:italic;font-weight:700;font-size:.86rem;}
-.tname.adv{color:#8a6c1c;}
-.tscore{font-size:1rem;font-weight:800;min-width:24px;text-align:right;color:#5c1010;flex-shrink:0;}
+.tscore{font-size:.74rem;font-weight:800;min-width:20px;text-align:right;color:#5c1010;}
 .tscore.wscore{color:#1a7d1a;}
-.wbadge{font-size:.66rem;font-weight:800;background:#1a7d1a;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;flex-shrink:0;}
-.tbd-card{border:1.5px dashed #d8cbb6;border-radius:10px;overflow:hidden;background:#fffdf8;}
-.tbd-card .meta-line{background:#fbf8f1;}
+.wbadge{font-size:.54rem;font-weight:800;background:#1a7d1a;color:#fff;padding:2px 5px;border-radius:4px;margin-left:2px;flex-shrink:0;}
+.tbd-card{border:1.5px dashed #d8cbb6;border-radius:12px;overflow:hidden;background:#fbfaf7;}
+.tbd-card .round-tag{background:#f4efe6;color:#b3a48d;}
+.tbd-card .round-tag::before{content:'⏳';}
+.tbd-card .meta-line{background:#f9f6f0;}
 
-/* ============ CHAMPION ============ */
-.champ-box{width:176px;margin:0 auto;border:2px solid #d4a017;border-radius:14px;padding:16px 10px;text-align:center;background:linear-gradient(150deg,#fdf6dd,#fffdf4 60%,#fdf3cf);box-shadow:0 6px 26px rgba(180,130,0,.3), inset 0 1px 0 rgba(255,255,255,.8);position:relative;overflow:hidden;}
-.champ-box::after{content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:sweep 4s ease-in-out infinite;}
-@keyframes sweep{0%,55%{left:-80%;}85%,100%{left:130%;}}
-.champ-box .ci{font-size:2rem;margin-bottom:6px;filter:drop-shadow(0 3px 8px rgba(180,130,0,.4));}
-.champ-box .cn{font-size:1.1rem;font-weight:800;color:#5c1010;}
-.champ-box .ctbd{font-size:.95rem;color:#c2b49f;font-style:italic;}
+/* Champion */
+.champ-box{width:178px;margin:0 auto;border:2px solid #d4a017;border-radius:14px;padding:20px 12px;text-align:center;background:linear-gradient(150deg,#fdf6dd,#fffdf4 60%,#fdf3cf);box-shadow:0 6px 24px rgba(180,130,0,.28), inset 0 1px 0 rgba(255,255,255,.8);position:relative;overflow:hidden;}
+.champ-box::before{content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:120px;height:60px;background:radial-gradient(ellipse,rgba(245,215,142,.6),transparent 70%);}
+.champ-box .ci{font-size:2.2rem;margin-bottom:8px;filter:drop-shadow(0 3px 6px rgba(180,130,0,.35));}
+.champ-box .cl{font-size:.58rem;font-weight:800;color:#96700a;text-transform:uppercase;letter-spacing:.2em;margin-bottom:7px;}
+.champ-box .cn{font-size:1rem;font-weight:800;color:#5c1010;}
+.champ-box .ctbd{font-size:.82rem;color:#c2b49f;font-style:italic;}
 
-@media(prefers-reduced-motion:reduce){
-  .header::after,.header .trophy,.champ-box::after,.slot{animation:none;}
+/* Mobile: stack rounds vertically */
+@media(max-width:640px){
+  .bracket-wrap{flex-direction:column;gap:26px;align-items:stretch;}
+  .bracket-wrap svg{display:none;}
+  .bracket-round{min-width:100%;}
+  .round-label{font-size:.74rem;}
+  .slot{width:100%;max-width:320px;}
+  .champ-box{width:100%;max-width:320px;}
+  .bracket-slots{gap:12px !important;}
 }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🏆 2026 Playoffs</h1>
+  <div class="trophy">🏆</div>
+  <h1>2026 Playoffs</h1>
+  <div class="sub">NA Coptic League · Road to the Championship</div>
 </div>
 
 <div class="filters">
@@ -104,6 +116,7 @@ body{font-family:Arial,sans-serif;background:#fdfcfa;overflow-x:hidden;}
 </div>
 
 <div class="main">
+<div id="dbg" style="text-align:center;font-size:.68rem;color:#c5b8a5;margin-bottom:10px;"></div>
 <div id="out">
   <div class="empty"><div class="icon">🏆</div><h3>Select a Division</h3><p>Choose a division to view the playoff bracket.</p></div>
 </div>
@@ -141,6 +154,117 @@ function normDate(d){
 function normDiv(d){
   return String(d||'').replace(/[\u2010-\u2015\u2212]/g,'-').replace(/\s+/g,'').toUpperCase();
 }
+/* Normalize a team name for COMPARISON only (display keeps original text).
+   Trims outer whitespace and collapses runs of interior whitespace to a
+   single space, then uppercases. Deliberately does NOT strip interior
+   spaces entirely — some divisions (College, Girls) have two genuinely
+   different teams whose names differ only by a space ("SI1" vs "SI 1"),
+   so collapsing all whitespace would make them collide. */
+function normTeam(s){
+  return String(s||'').trim().replace(/\s+/g,' ').toUpperCase();
+}
+
+/* ── Seed order per division (1 = top seed), taken from the standings
+   pages. Used to slot playoff games into the correct bracket position
+   regardless of which order games were scheduled/played in. ── */
+var SEEDS = {
+  JHS: ["Queens","Makkar","EB (1)","SI2","Holmdel","Summit","West Side","SI1"],
+  GIRLS: ["EB (1)","Queens","SI 1","Holmdel","SI1","Belleville","Bayonne 1 (SASA)","Makkar"],
+  "HS-NY": ["Queens","Astoria","Brooklyn (1)","SI1 (1)","Long Island (1)","SI1 (2)","SI2 (2)","Long Island (2)"],
+  "HS-NJ": ["EB (1)","Makkar","EB (2)","Holmdel","Philadelphia","Upstate","Paramus","West Side"],
+  COLLEGE: ["SI1","SI 1","EB (1)","Philadelphia","Brooklyn","Holmdel","Long Island","Queens"],
+  MENS: ["Long Island","EB","Summit","Queens","Holmdel","SI1","SI2","Bayonne 1 (SASA)"]
+};
+/* Cross-division championship pairing */
+var CROSS_DIV = {"HS-NY":"HS-NJ","HS-NJ":"HS-NY"};
+
+function seedOf(div, name){
+  var arr = SEEDS[normDiv(div)];
+  if(!arr || !name) return null;
+  var n = normTeam(name);
+  for(var i=0;i<arr.length;i++){
+    if(normTeam(arr[i])===n) return i+1;
+  }
+  return null;
+}
+
+var SLOT_SEEDS=[[1,8],[4,5],[2,7],[3,6]]; // canonical seed pair per bracket slot
+function slotOfSeed(seed){
+  for(var i=0;i<4;i++){ if(SLOT_SEEDS[i].indexOf(seed)>=0) return i; }
+  return -1;
+}
+
+/* Places up to 4 games into the [1v8, 4v5, 2v7, 3v6] bracket slots using
+   whichever participant has the better (lower) seed as the anchor. This
+   guarantees correct bracket grouping even if a round includes byes or
+   unseeded opponents — the seeded team's position determines the slot.
+   When two games' anchors collide on the same slot (happens when a bye
+   shifts one game's true opponent out of the round), the better-seeded
+   game keeps its natural slot and the other is placed in whichever
+   remaining open slot is numerically closest to its own seed(s), rather
+   than just dropped into the first empty index. */
+function orderBySeed(div, games){
+  var items = games.map(function(g){
+    var s1=seedOf(div,g.t1), s2=seedOf(div,g.t2);
+    var seeds=[s1,s2].filter(function(x){return x!=null;});
+    var anchor = seeds.length ? Math.min.apply(null,seeds) : null;
+    var gi = anchor!=null ? slotOfSeed(anchor) : -1;
+    return {g:g, seeds:seeds, anchor:anchor, gi:gi};
+  });
+  var result=[null,null,null,null];
+  var withSlot = items.filter(function(it){return it.gi>=0;})
+                       .sort(function(a,b){return a.anchor-b.anchor;});
+  var pending=[];
+  withSlot.forEach(function(it){
+    if(!result[it.gi]) result[it.gi]=it.g;
+    else pending.push(it);
+  });
+  items.filter(function(it){return it.gi<0;}).forEach(function(it){pending.push(it);});
+
+  pending.forEach(function(it){
+    var open=[];
+    for(var i=0;i<4;i++){ if(!result[i]) open.push(i); }
+    if(!open.length) return;
+    if(!it.seeds.length){ result[open[0]]=it.g; return; }
+    var best=open[0], bestCost=Infinity;
+    open.forEach(function(gi){
+      var pair=SLOT_SEEDS[gi];
+      var cost=Math.min.apply(null, it.seeds.map(function(s){
+        return Math.min(Math.abs(s-pair[0]), Math.abs(s-pair[1]));
+      }));
+      if(cost<bestCost){bestCost=cost;best=gi;}
+    });
+    result[best]=it.g;
+  });
+  return result;
+}
+
+/* Matches actual scheduled games in `games` to `sideGroups` (an array of
+   candidate-name arrays, one per next-round slot) so the right box score
+   metadata (date/time/venue) attaches to the right bracket slot, without
+   relying on the order games happen to be listed in the sheet. */
+function assignBySide(games, sideGroups){
+  var result=sideGroups.map(function(){return null;});
+  var used=games.map(function(){return false;});
+  sideGroups.forEach(function(names, idx){
+    var cands=names.filter(function(n){return !!n;}).map(normTeam);
+    if(!cands.length)return;
+    for(var i=0;i<games.length;i++){
+      if(used[i])continue;
+      var a=normTeam(games[i].t1), b=normTeam(games[i].t2);
+      if(cands.indexOf(a)>=0 || cands.indexOf(b)>=0){ result[idx]=games[i]; used[i]=true; break; }
+    }
+  });
+  var li=0;
+  for(var i=0;i<result.length;i++){
+    if(!result[i]){
+      while(li<games.length && used[li]) li++;
+      if(li<games.length){ result[i]=games[li]; used[li]=true; li++; }
+    }
+  }
+  return result;
+}
+
 function fmtShortDate(d){
   return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
 }
@@ -156,6 +280,7 @@ function loadGames(){
         g.date = normDate(g.date);
         return g;
       });
+      document.getElementById('dbg').textContent = GAMES.length+' games loaded';
       var dv=document.getElementById('fdiv').value;
       if(dv)renderBracket();
     })
@@ -169,159 +294,85 @@ function sortDT(a,b){
   function to24(t){var p=String(t||'').split(' '),hm=(p[0]||'0:00').split(':'),h=+hm[0],m=+hm[1]||0;if(p[1]==='PM'&&h!==12)h+=12;if(p[1]==='AM'&&h===12)h=0;return h*60+m;}
   return to24(a.time)-to24(b.time);
 }
-function isPlaceholder(name){return !name || String(name).indexOf('/')>=0;}
+/* Winner flag normalized to lowercase — sheet sometimes has "T1"/"T2" */
+function winner(g){
+  if(!g)return null;
+  var w=String(g.winner||'').trim().toLowerCase();
+  if(w==='t1')return g.t1;
+  if(w==='t2')return g.t2;
+  return null;
+}
+function isPlaceholder(name){return !name || name.indexOf('/')>=0;}
 
 /*
-  Build a display slot from a scheduled game plus the winners feeding into it.
-  Priority for each team line:
-    1. Real name in games.json
-    2. Winner auto-advanced from the feeding game (winner flag OR scores)
-    3. Predicted pairing text from games.json (placeholder like "Team A / Team B")
-    4. TBD
-  Date / time / venue always autopopulate from the scheduled game.
+  Build a display slot:
+  - sched: the scheduled game from json (gives date/time/venue + possibly winner/scores)
+  - feedW1, feedW2: winners of feeding games (null if not decided)
+  Teams shown: real names from sched if not placeholders; otherwise feeding winners; otherwise TBD.
 */
 function buildSlot(sched, feedW1, feedW2){
-  var t1=null,t2=null,fed1=false,fed2=false,pend1=false,pend2=false;
+  var t1=null, t2=null;
   if(sched && !isPlaceholder(sched.t1)) t1=sched.t1;
-  else if(feedW1){ t1=feedW1; fed1=true; }
-  else if(sched && sched.t1){ t1=sched.t1; pend1=true; }
+  else if(feedW1) t1=feedW1;
   if(sched && !isPlaceholder(sched.t2)) t2=sched.t2;
-  else if(feedW2){ t2=feedW2; fed2=true; }
-  else if(sched && sched.t2){ t2=sched.t2; pend2=true; }
-
-  var s1 = sched ? (sched.s1!==undefined&&sched.s1!==null?String(sched.s1):'') : '';
-  var s2 = sched ? (sched.s2!==undefined&&sched.s2!==null?String(sched.s2):'') : '';
-  var real = sched && !isPlaceholder(sched.t1) && !isPlaceholder(sched.t2);
-  var win = '';
-  if(real){
-    if(sched.winner==='t1'||sched.winner==='t2'){
-      win = sched.winner;
-    } else if(s1!=='' && s2!=='' && !isNaN(+s1) && !isNaN(+s2) && +s1!==+s2){
-      win = (+s1 > +s2) ? 't1' : 't2';
-    }
-  }
+  else if(feedW2) t2=feedW2;
   return {
-    t1:t1, t2:t2, fed1:fed1, fed2:fed2, pend1:pend1, pend2:pend2,
-    date:sched?sched.date:null, time:sched?sched.time:null, v:sched?sched.v:null,
-    winner:win,
-    s1:real?s1:'', s2:real?s2:''
+    t1:t1, t2:t2,
+    date:sched?sched.date:null,
+    time:sched?sched.time:null,
+    v:sched?sched.v:null,
+    winner:(sched && !isPlaceholder(sched.t1) && !isPlaceholder(sched.t2))?(sched.winner||''):'',
+    s1:sched?sched.s1:'', s2:sched?sched.s2:''
   };
 }
+
 function slotWinner(slot){
-  if(!slot||!slot.winner)return null;
-  return slot.winner==='t1'?slot.t1:slot.t2;
+  if(!slot)return null;
+  var w=String(slot.winner||'').trim().toLowerCase();
+  if(w==='t1')return slot.t1;
+  if(w==='t2')return slot.t2;
+  return null;
 }
 
-function normName(s){return String(s||'').toLowerCase().replace(/\s+/g,' ').trim();}
-
-/* Find which previous-round game feeds this team slot, by reading the
-   placeholder text. "Astoria / SI2 (2)" matches the prev game whose two
-   teams are Astoria and SI2 (2). A real name matches the prev game that
-   contains that team (i.e. its winner already advanced). Returns index
-   into prevSlots, or -1. */
-function findFeeder(nameStr, prevSlots, used){
-  if(!nameStr) return -1;
-  var s = String(nameStr);
-  if(s.indexOf('/')>=0){
-    var p = s.split('/').map(normName).filter(Boolean);
-    if(p.length===2){
-      for(var i=0;i<prevSlots.length;i++){
-        if(used[i]||!prevSlots[i]) continue;
-        var a=normName(prevSlots[i].t1), b=normName(prevSlots[i].t2);
-        if(a&&b&&((a===p[0]&&b===p[1])||(a===p[1]&&b===p[0]))) return i;
-      }
-    }
-  } else {
-    var n = normName(s);
-    if(!n) return -1;
-    for(var j=0;j<prevSlots.length;j++){
-      if(used[j]||!prevSlots[j]) continue;
-      if(normName(prevSlots[j].t1)===n||normName(prevSlots[j].t2)===n) return j;
-    }
-  }
-  return -1;
-}
-
-/* Pair a round's games to the previous round using placeholder text.
-   Returns { slots, prevOrder }:
-   - slots: this round's slots with winners fed from the CORRECT prev games
-   - prevOrder: display order for the previous round so bracket lines
-     connect the right games (feeders sit next to the game they feed).
-   Falls back to time-order pairing if no placeholder text matches. */
-function pairRound(prevSlots, games, expectCount){
-  var used={}, feeds=[], anyMatch=false, g;
-  for(g=0; g<games.length; g++){
-    var slotG = buildSlot(games[g],null,null); // parse names as-is
-    var i1 = findFeeder(games[g].t1, prevSlots, used); if(i1>=0){used[i1]=true;anyMatch=true;}
-    var i2 = findFeeder(games[g].t2, prevSlots, used); if(i2>=0){used[i2]=true;anyMatch=true;}
-    feeds.push([i1,i2]);
-  }
-  var n = Math.max(expectCount, games.length);
-  var slots=[], prevOrder=[];
-  if(anyMatch){
-    for(g=0; g<n; g++){
-      var gm = games[g]||null;
-      var f = feeds[g]||[-1,-1];
-      var w1 = f[0]>=0 ? slotWinner(prevSlots[f[0]]) : null;
-      var w2 = f[1]>=0 ? slotWinner(prevSlots[f[1]]) : null;
-      slots.push(gm ? buildSlot(gm,w1,w2) : null);
-      if(f[0]>=0) prevOrder.push(f[0]);
-      if(f[1]>=0) prevOrder.push(f[1]);
-    }
-    for(var k=0;k<prevSlots.length;k++) if(prevOrder.indexOf(k)<0) prevOrder.push(k);
-  } else {
-    for(g=0; g<n; g++){
-      var gm2 = games[g]||null;
-      var wa = slotWinner(prevSlots[2*g]||null), wb = slotWinner(prevSlots[2*g+1]||null);
-      slots.push((gm2||wa||wb) ? buildSlot(gm2,wa,wb) : null);
-    }
-    for(var k2=0;k2<prevSlots.length;k2++) prevOrder.push(k2);
-  }
-  return {slots:slots, prevOrder:prevOrder};
-}
-
-function buildDivRounds(div){
-  var isHS = (div==='HS-NY'||div==='HS-NJ');
+/* Runs the full seeded-bracket pipeline for one division and returns its
+   computed rounds plus its division champion (the winner that reaches
+   the cross-division Championship, for HS-NY/HS-NJ) or overall champion
+   otherwise. Pure computation, no HTML, so it can be reused both to
+   render the selected division and to peek at the other HS division's
+   champion for the Finals matchup. */
+function buildDivisionBracket(div){
   var dg = GAMES.filter(function(g){return normDiv(g.div)===normDiv(div);});
   var r1 = dg.filter(function(g){return g.date===R1_DATE;}).sort(sortDT);
   var r2 = dg.filter(function(g){return g.date===R2_DATE;}).sort(sortDT);
-  var sf = dg.filter(function(g){return SF_DATES.indexOf(g.date)>=0;}).sort(sortDT);
+  var sfRaw = dg.filter(function(g){return SF_DATES.indexOf(g.date)>=0;}).sort(sortDT);
+  var fRaw  = dg.filter(function(g){return F_DATES.indexOf(g.date)>=0;}).sort(sortDT);
   var twoStage = r2.length > 0;
 
-  var rounds = [];
-  var r1slots = [];
-  for(var i=0;i<Math.max(4,r1.length);i++) r1slots.push(r1[i]?buildSlot(r1[i],null,null):null);
+  // Base round (First Round / Quarterfinals) — placed by seed, not time.
+  var r1ord = orderBySeed(div, r1);
+  var w1 = r1ord.map(winner);
 
   if(twoStage){
-    // Pair Round 2 to Round 1 by placeholder text, reorder Round 1 to match.
-    var p = pairRound(r1slots, r2, 2);
-    var r1display = p.prevOrder.map(function(idx){return r1slots[idx];});
-    rounds.push({label:'First Round', slots:r1display});
-    rounds.push({label: isHS?'Second Round':'Round 2', slots:p.slots});
-    // Division final fed by the two Round 2 games.
-    var p2 = pairRound(p.slots, sf, 1);
-    var dfSlot = p2.slots[0]||null;
-    // Reorder Round 2 (and Round 1 with it) if the final's text says so.
-    if(p2.prevOrder.length===p.slots.length && (p2.prevOrder[0]!==0)){
-      rounds[1].slots = p2.prevOrder.map(function(idx){return p.slots[idx];});
-    }
-    rounds.push({label:'Semifinals', slots:[dfSlot]});
-    var dfW = slotWinner(dfSlot);
-    return {rounds:rounds, champion:dfW, lastWinners:[dfW,null]};
+    var r2games = assignBySide(r2, [[w1[0],w1[1]],[w1[2],w1[3]]]);
+    var r2slots = [
+      buildSlot(r2games[0]||null, w1[0]||null, w1[1]||null),
+      buildSlot(r2games[1]||null, w1[2]||null, w1[3]||null)
+    ];
+    var w2 = r2slots.map(slotWinner);
+    var sfSlot = buildSlot(sfRaw[0]||null, w2[0]||null, w2[1]||null);
+    var divisionChamp = slotWinner(sfSlot);
+    return {kind:'two', r1:r1ord, r2:r2slots, sf:sfSlot, fRaw:fRaw, divisionChamp:divisionChamp};
   } else {
-    // Pair Semifinals to Quarterfinals by placeholder text, reorder QF to match.
-    var ps = pairRound(r1slots, sf, 2);
-    var qfDisplay = ps.prevOrder.map(function(idx){return r1slots[idx];});
-    rounds.push({label:'Quarterfinals', slots:qfDisplay});
-    rounds.push({label:'Semifinals', slots:ps.slots});
-    var sw = ps.slots.map(slotWinner);
-    return {rounds:rounds, champion:null, lastWinners:[sw[0]||null, sw[1]||null]};
+    var sfGames = assignBySide(sfRaw, [[w1[0],w1[1]],[w1[2],w1[3]]]);
+    var sfSlots = [
+      buildSlot(sfGames[0]||null, w1[0]||null, w1[1]||null),
+      buildSlot(sfGames[1]||null, w1[2]||null, w1[3]||null)
+    ];
+    var sw = sfSlots.map(slotWinner);
+    var fSlot = buildSlot(fRaw[0]||null, sw[0]||null, sw[1]||null);
+    var champ = slotWinner(fSlot);
+    return {kind:'single', r1:r1ord, sf:sfSlots, f:fSlot, champ:champ};
   }
-}
-
-function divChampion(div){
-  var b = buildDivRounds(div);
-  return b.champion || null;
 }
 
 function renderBracket(){
@@ -329,92 +380,76 @@ function renderBracket(){
   var out = document.getElementById('out');
   if(!div){out.innerHTML='<div class="empty"><div class="icon">🏆</div><h3>Select a Division</h3><p>Choose a division to view the playoff bracket.</p></div>';return;}
 
-  var isHS = (div==='HS-NY'||div==='HS-NJ');
   var dg = GAMES.filter(function(g){return normDiv(g.div)===normDiv(div);});
-
-  var f;
-  if(isHS){
-    f = GAMES.filter(function(g){return F_DATES.indexOf(g.date)>=0 && normDiv(g.div).indexOf('HS')===0;}).sort(sortDT);
-  } else {
-    f = dg.filter(function(g){return F_DATES.indexOf(g.date)>=0;}).sort(sortDT);
-  }
-
-  var anyPO = dg.some(function(g){return ALL_PO.indexOf(g.date)>=0;}) || f.length>0;
-  if(!anyPO){
+  var poCount=dg.filter(function(g){return ALL_PO.indexOf(g.date)>=0;}).length;
+  if(!poCount){
     out.innerHTML='<div class="empty"><div class="icon">📅</div><h3>No Playoff Games Yet</h3><p>The '+div+' bracket will appear once games are scheduled.<br><br><span style="font-size:.72rem;color:#bbb;">Debug: '+GAMES.length+' total · '+dg.length+' in division</span></p></div>';
     return;
   }
 
-  var b = buildDivRounds(div);
-  var rounds = b.rounds;
+  var res = buildDivisionBracket(div);
+  var html = '<div class="div-title"><h2>🏆 '+ (DIV_LABELS[div]||div) +' Division</h2></div>';
+  html += '<div class="legend"><span><span class="dot g"></span>Winner</span><span><span class="dot gold"></span>Scheduled</span><span><span class="dot t"></span>TBD</span></div>';
+  html += '<div class="bracket-wrap">';
 
-  var fSlot, fTbdLabels=null, fLabel;
-  if(isHS){
-    fLabel = 'Championship';
-    fSlot = buildSlot(f[0]||null, divChampion('HS-NY'), divChampion('HS-NJ'));
-    fTbdLabels = ['HS-NY Champion','HS-NJ Champion'];
+  if(res.kind==='two'){
+    // First Round (4, seeded 1v8/4v5/2v7/3v6) → Round 2 (2) → Semifinals
+    // (1, division championship) → Finals (1, cross-division vs the other
+    // HS bracket's champion) → Champion
+    var otherDiv = CROSS_DIV[normDiv(div)];
+    var otherChamp = null;
+    if(otherDiv){
+      var otherRes = buildDivisionBracket(otherDiv);
+      otherChamp = otherRes.divisionChamp;
+    }
+    var fSlot = buildSlot(res.fRaw[0]||null, res.divisionChamp||null, otherChamp||null);
+    var champ = slotWinner(fSlot);
+
+    html += roundCol('First Round', res.r1.map(rawToSlot), 4);
+    html += connector(4,2);
+    html += roundCol('Round 2', res.r2, 2);
+    html += connector(2,1);
+    html += roundCol('Semifinals', [res.sf], 1);
+    html += connector(1,1);
+    html += roundCol('Finals', [fSlot], 1);
+    html += connector(1,1);
+    html += champCol(champ);
   } else {
-    fLabel = 'Finals';
-    fSlot = buildSlot(f[0]||null, b.lastWinners[0], b.lastWinners[1]);
+    // Quarterfinals (4, seeded 1v8/4v5/2v7/3v6) → Semifinals (2) → Finals (1) → Champion
+    html += roundCol('Quarterfinals', res.r1.map(rawToSlot), 4);
+    html += connector(4,2);
+    html += roundCol('Semifinals', res.sf, 2);
+    html += connector(2,1);
+    html += roundCol('Finals', [res.f], 1);
+    html += connector(1,1);
+    html += champCol(res.champ);
   }
-  rounds.push({label:fLabel, slots:[fSlot], tbdLabels:fTbdLabels});
 
-  var champ = slotWinner(fSlot);
-
-  var html = '';
-  if(isHS){
-    var other = div==='HS-NY' ? 'HS-NJ' : 'HS-NY';
-    html += '<div class="hs-note">'+div+' champ vs '+other+' champ · HS Championship · Jul 26</div>';
-  }
-  html += '<div class="bracket-outer"><div class="bracket-wrap" id="bwrap">';
-
-  for(var i=0;i<rounds.length;i++){
-    if(i>0) html += dConn(rounds[i-1].slots.length, rounds[i].slots.length);
-    html += roundCol(rounds[i]);
-  }
-  html += dConn(1,1);
-  html += champCol(champ, isHS ? 'HS Champion' : 'Champion');
-
-  html += '</div></div>';
+  html += '</div>';
   out.innerHTML = html;
-  fitBracket();
 }
 
-/* Scale the classic bracket to fit the screen width — same layout on
-   desktop and mobile, never any horizontal scrolling. */
-function fitBracket(){
-  var wrap = document.getElementById('bwrap');
-  if(!wrap) return;
-  var outer = wrap.parentNode;
-  wrap.style.transform = 'none';
-  outer.style.height = 'auto';
-  var natW = wrap.scrollWidth;
-  var natH = wrap.offsetHeight;
-  var avail = outer.clientWidth;
-  var s = Math.min(1, avail / natW);
-  if(s < 1){
-    wrap.style.transform = 'scale('+s+')';
-    outer.style.height = (natH * s) + 'px';
-  }
+function rawToSlot(g){
+  if(!g) return null;
+  return {t1:g.t1,t2:g.t2,date:g.date,time:g.time,v:g.v,winner:g.winner||'',s1:g.s1||'',s2:g.s2||''};
 }
-window.addEventListener('resize', fitBracket);
 
-function roundCol(round){
+function roundCol(label, slots, count){
   var h = '<div class="bracket-round">';
-  h += '<div class="round-label">'+round.label+'</div>';
-  h += '<div class="bracket-slots">';
-  for(var i=0;i<round.slots.length;i++){
-    h += '<div class="slot">'+gameCard(round.slots[i], round.label, round.tbdLabels)+'</div>';
+  h += '<div class="round-label">'+label+'</div>';
+  h += '<div class="bracket-slots" style="gap:14px;">';
+  for(var i=0;i<count;i++){
+    h += '<div class="slot">'+gameCard(slots[i]||null, label)+'</div>';
   }
   h += '</div></div>';
   return h;
 }
 
 function metaHTML(slot){
-  if(!slot||(!slot.date&&!slot.v&&!slot.time)) return '';
+  if(!slot||(!slot.date&&!slot.v)) return '';
   var parts=[];
-  if(slot.date) parts.push('📅 '+fmtShortDate(slot.date));
-  if(slot.time) parts.push('🕐 '+slot.time);
+  if(slot.date) parts.push(fmtShortDate(slot.date));
+  if(slot.time) parts.push(slot.time);
   var vn = slot.v?VENUES[slot.v]:null;
   if(vn) parts.push('<a href="'+vn.url+'" target="_blank">📍 '+vn.name+'</a>');
   else if(slot.v) parts.push('📍 '+slot.v);
@@ -422,45 +457,36 @@ function metaHTML(slot){
   return '<div class="meta-line"><span>'+parts.join('</span><span>')+'</span></div>';
 }
 
-function gameCard(slot, roundLabel, tbdLabels){
-  var tbd1 = (tbdLabels&&tbdLabels[0])||'TBD';
-  var tbd2 = (tbdLabels&&tbdLabels[1])||'TBD';
-  if(!slot){
-    return '<div class="tbd-card">'+
-      '<div class="team-line"><span class="tname tbd">'+tbd1+'</span></div>'+
-      '<div class="team-line"><span class="tname tbd">'+tbd2+'</span></div></div>';
+function gameCard(slot, roundLabel){
+  if(!slot || (!slot.t1 && !slot.t2 && !slot.date)){
+    return '<div class="tbd-card"><div class="round-tag">'+roundLabel+'</div>'+
+      '<div class="team-line"><span class="tname tbd">TBD</span></div>'+
+      '<div class="team-line"><span class="tname tbd">TBD</span></div></div>';
   }
   var w = slotWinner(slot);
-  var t1win = w && w===slot.t1, t2win = w && w===slot.t2;
-  var t1 = slot.t1||tbd1, t2 = slot.t2||tbd2;
-  var settled = slot.t1 && slot.t2 && !slot.pend1 && !slot.pend2;
-  var cardClass = settled ? 'game-card' : 'tbd-card';
-  function nameClass(has,pend,fed){
-    if(!has) return ' tbd';
-    if(pend) return ' pend';
-    if(fed) return ' adv';
-    return '';
-  }
+  var t1win = w && normTeam(w)===normTeam(slot.t1), t2win = w && normTeam(w)===normTeam(slot.t2);
+  var t1 = slot.t1||'TBD', t2 = slot.t2||'TBD';
+  var cardClass = (slot.t1&&slot.t2)?'game-card':'tbd-card';
   return '<div class="'+cardClass+'">'+
+    '<div class="round-tag">'+roundLabel+'</div>'+
     metaHTML(slot)+
     '<div class="team-line'+(t1win?' win':w?' lose':'')+'">'+
-      '<span class="tname'+nameClass(slot.t1,slot.pend1,slot.fed1)+'">'+t1+'</span>'+
+      '<span class="tname'+(!slot.t1?' tbd':'')+'">'+t1+'</span>'+
       (slot.s1?'<span class="tscore'+(t1win?' wscore':'')+'">'+slot.s1+'</span>':'')+
       (t1win?'<span class="wbadge">W</span>':'')+
     '</div>'+
     '<div class="team-line'+(t2win?' win':w?' lose':'')+'">'+
-      '<span class="tname'+nameClass(slot.t2,slot.pend2,slot.fed2)+'">'+t2+'</span>'+
+      '<span class="tname'+(!slot.t2?' tbd':'')+'">'+t2+'</span>'+
       (slot.s2?'<span class="tscore'+(t2win?' wscore':'')+'">'+slot.s2+'</span>':'')+
       (t2win?'<span class="wbadge">W</span>':'')+
     '</div>'+
   '</div>';
 }
 
-/* Connector: SVG lines between bracket columns */
-function dConn(fromCount, toCount){
-  var totalH = 4*128 + 3*14;
-  var w=20;
-  var svg='<svg class="d-conn" width="'+w+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg">';
+function connector(fromCount, toCount){
+  var totalH = 4*110 + 3*14;
+  var w=34;
+  var svg='<svg width="'+w+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;align-self:center;">';
   var fromSpacing = totalH/fromCount;
   var toSpacing = totalH/toCount;
   var ratio = fromCount/toCount;
@@ -481,13 +507,14 @@ function dConn(fromCount, toCount){
   return svg;
 }
 
-function champCol(champ, label){
+function champCol(champ){
   return '<div class="bracket-round">'+
-    '<div class="round-label">'+label+'</div>'+
+    '<div class="round-label">Champion</div>'+
     '<div class="bracket-slots" style="justify-content:center;">'+
     '<div class="slot"><div class="champ-box">'+
       '<div class="ci">🏆</div>'+
-      (champ ? '<div class="cn">'+champ+'</div>' : '')+
+      '<div class="cl">Champion</div>'+
+      (champ ? '<div class="cn">'+champ+'</div>' : '<div class="ctbd">To Be Crowned</div>')+
     '</div></div></div></div>';
 }
 
