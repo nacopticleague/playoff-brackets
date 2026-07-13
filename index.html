@@ -51,6 +51,7 @@ body{font-family:Arial,sans-serif;background:#fff;min-height:100vh;overflow-x:hi
 .trophy{font-size:2rem;margin-bottom:4px;}
 .champ-label{font-size:.6rem;font-weight:700;color:#5c1010;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
 .champ-name{font-size:.85rem;font-weight:800;color:#7d1a1a;text-align:center;}
+.champ-note{font-size:.55rem;color:#888;text-align:center;margin-top:4px;font-style:italic;line-height:1.3;}
 
 /* ── Connectors ── */
 .round .matchup{position:relative;}
@@ -339,8 +340,14 @@ function renderBracket(){
   var champClass=divWinner?'champion-box has-champ':'champion-box';
   h+='<div class="'+champClass+'">';
   h+='<div class="trophy">🏆</div>';
-  h+='<div class="champ-label">Champion</div>';
-  h+='<div class="champ-name">'+(divWinner?divWinner.name:'')+'</div>';
+  if(isHS){
+    h+='<div class="champ-label">Division Winner</div>';
+    h+='<div class="champ-name">'+(divWinner?divWinner.name:'')+'</div>';
+    h+='<div class="champ-note">'+(divWinner?'Plays other division in Championship':'')+'</div>';
+  }else{
+    h+='<div class="champ-label">Champion</div>';
+    h+='<div class="champ-name">'+(divWinner?divWinner.name:'')+'</div>';
+  }
   h+='</div>';
 
   h+='</div></div></div>';
