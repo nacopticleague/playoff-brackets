@@ -114,11 +114,13 @@ var BRACKETS={
   },
   "HS-NY":{
     seeds:["Queens","Astoria","Brooklyn (1)","SI1 (1)","Long Island (1)","SI1 (2)","SI2 (2)","SI2 (1)"],
-    firstRound:[[1,0],[1,0],[1,0],[1,0]] /* Q>SI2(1), SI1(1)>LI, BK1>SI1(2), Ast>SI2(2) */
+    firstRound:[[1,0],[1,0],[1,0],[1,0]],
+    secondRound:[[0,1],[0,1]] /* SI1(1)>Queens, Astoria>BK1 */
   },
   "HS-NJ":{
     seeds:["EB (1)","Makkar","Holmdel","EB (2)","Upstate","Philadelphia","West Side","Bayonne 1 (SASA) (2)"],
-    firstRound:[[1,0],[1,0],[0,1],[1,0]] /* EB1>Bay(2), EB2>Ups, Phil>Hol, Mak>WS */
+    firstRound:[[1,0],[1,0],[0,1],[1,0]],
+    secondRound:[[1,0],[0,1]] /* EB1>EB2, Makkar>Phil */
   },
   "College":{
     seeds:["SI1","EB (1)","Philadelphia","Holmdel","Brooklyn","Bayonne 1 (SASA)","EB (2)","Queens"],
@@ -282,7 +284,13 @@ function renderBracket(){
     var tA=w1||{name:'TBD',seed:null};
     var tB=w2||{name:'TBD',seed:null};
     var scoreA=null,scoreB=null,winner=null;
-    if(w1&&w2){
+
+    /* Check hardcoded secondRound first */
+    if(b.secondRound&&b.secondRound[s]&&w1&&w2){
+      var r=b.secondRound[s];
+      scoreA=r[0];scoreB=r[1];
+      winner=scoreA>scoreB?tA:scoreB>scoreA?tB:null;
+    }else if(w1&&w2){
       var result=findGame(games,div,tA.name,tB.name,ROUND_DATES.semi);
       scoreA=result?result.scoreA:null;
       scoreB=result?result.scoreB:null;
